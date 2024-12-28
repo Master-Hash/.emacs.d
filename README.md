@@ -4,12 +4,11 @@
 
 ## 配置原则
 
-Visual Studio Code 是我的主力编辑器，足以应付大部分前端、写作和 Rust 工作，但我仍需一快速启动的终端编辑器，来临时修改 shell profile 等小文件，以及节约宝贵的内存。为此我折腾过无数次。Sublime、Zed 都不太合我意，Emacs 也许能担此大任。
+Visual Studio Code 是我的主力编辑器，足以应付大部分前端、写作和 Rust 工作，但我仍需一快速启动的终端编辑器，来临时修改 shell profile 等小文件，以及节约宝贵的内存。为此我折腾过无数次。Sublime、Zed 都不太合我意。Emacs 也不行，这家伙最慢的就是冷启动，但我还是打算接着用。
 
 总体原则如下：
 
 * 内置功能优先；
-* 优先使用 tree-sitter 和 lsp，次而选择传统的主要模式；
 * 遵守 Unix 终端和 Windows 图形的[键位约定](https://en.wikipedia.org/wiki/Control_key)，尊重 VSCode 里养成的肌肉记忆和审美；
 
 本人使用 Windows，Emacs 选取 MSYS2 UCRT 译本。大部分软件我偏爱 Clang64 译本，Emacs 除外，因为 native-comp 依赖 libgccjit。MSYS2 Shell 和 Windows Shell 对 `$HOME` 的规定有所不同，我仅在 Windows Shell 下使用，因此本仓库应该位于 `%APPDATA%` 目录下。
@@ -18,8 +17,10 @@ Visual Studio Code 是我的主力编辑器，足以应付大部分前端、写�
 
 ## 改进空间
 
-* 懒加载模块（例如首屏不显示的 imenu-list）；
-* 使 vtsls 和 pyright 正常工作；
+- [ ] Wait for Emacs 30: `visual-wrap-prefix-mode`; ts-mode 继承；`tab-line-mode`（也许？）；GUD with LLDB；
+- [x] 懒加载 eglot & tree-sitter（别的懒得管了，我自己写的 dll 加载都比他慢）；
+- [ ] ~~使 vtsls 和 pyright 正常工作~~ 已经用别的部分代替；
+- [ ] ~~使 client/deamon 模式正常工作~~；
 
 ## 同步上游
 
