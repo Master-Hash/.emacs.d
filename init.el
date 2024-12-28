@@ -44,6 +44,7 @@
 ;; https://rufflewind.com/2014-07-20/pasting-unicode-in-emacs-on-windows
 (if (eq system-type 'windows-nt)
     (progn
+      (setq wakatime-cli-path "C:\\Users\\hash\\go\\bin\\wakatime-cli.exe")
       (set-clipboard-coding-system 'utf-16-le)
       (set-selection-coding-system 'utf-16-le))
   (set-selection-coding-system 'utf-8))
@@ -261,7 +262,6 @@
 ;; (global-set-key (kbd "C-=") 'er/expand-region)
 (load "~/.emacs.d/modules/emt")
 (emt-mode)
-(global-hl-line-mode)
 (global-set-key (kbd "C-<left>") 'emt-backward-word)
 (global-set-key (kbd "M-<left>") 'emt-backward-word)
 (global-set-key (kbd "C-<right>") 'emt-forward-word)
@@ -284,6 +284,7 @@
 
 (when window-system
   (pixel-scroll-precision-mode)
+  (global-hl-line-mode)
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode)
   (add-hook 'ibuffer-mode-hook #'nerd-icons-ibuffer-mode)
@@ -366,6 +367,7 @@
  '(corfu-cycle t)
  '(cua-mode t)
  '(cursor-type 'bar)
+ '(delete-selection-mode nil)
  '(dictionary-server "dict.org")
  '(dired-auto-revert-buffer t t)
  '(dired-dwim-target t t)
@@ -416,7 +418,6 @@
    '(c cpp bash css html python rust javascript typescript json css dockerfile yaml sql toml))
  '(treesit-font-lock-level 4)
  '(vertico-cycle t)
- '(wakatime-cli-path "C:\\Users\\hash\\go\\bin\\wakatime-cli.exe")
  '(whitespace-style
    '(face trailing tabs spaces missing-newline-at-eof empty indentation space-after-tab space-before-tab space-mark tab-mark))
  '(xref-show-definitions-function 'xref-show-definitions-completing-read t)
