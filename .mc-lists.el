@@ -3,9 +3,29 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        backward-sexp
+        beginning-of-visual-line
+        cua-copy-handler
+        cua-copy-region
+        cua-cut-handler
+        cua-cut-region
+        cua-exchange-point-and-mark
+        cua-paste
         eglot
+        emt-forward-word
+        end-of-visual-line
+        forward-sexp
+        global-visual-line-mode
+        yank-rectangle
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        ace-swap-window
+        describe-key
+        ignore
+        kill-region
+        mc/mark-next-lines
+        pixel-scroll-precision
+        undo-redo
         ))

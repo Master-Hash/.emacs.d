@@ -83,11 +83,11 @@ also enables undo functionality if the window layout changes."
 ;; Note: If you also use `crafted-completion-config' and have `vertico'
 ;;       installed, all of these modes will be turned off in favour of
 ;;       `vertico'.
-(if (version< emacs-version "28")
-    (if (locate-library "icomplete-vertical")
-        (icomplete-vertical-mode 1)
-      (icomplete-mode 1))
-  (fido-vertical-mode 1))
+;; (if (version< emacs-version "28")
+;;     (if (locate-library "icomplete-vertical")
+;;         (icomplete-vertical-mode 1)
+;;       (icomplete-mode 1))
+;;   (fido-vertical-mode 1))
 
 ;; No matter which completion mode is used:
 (customize-set-variable 'tab-always-indent 'complete)
@@ -139,23 +139,23 @@ also enables undo functionality if the window layout changes."
 ;;; Navigation
 
 ;; add hydra to facilitate remembering the keys and actions for dumb-jump
-(when (and (require 'hydra nil :noerror)
-           (require 'dumb-jump nil :noerror))
-  (defhydra dumb-jump-hydra (:color blue :columns 3)
-    "Dumb Jump"
-    ("j" dumb-jump-go "Go")
-    ("o" dumb-jump-go-other-window "Other window")
-    ("e" dumb-jump-go-prefer-external "Go external")
-    ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
-    ("i" dumb-jump-go-prompt "Prompt")
-    ("l" dumb-jump-quick-look "Quick look")
-    ("b" dumb-jump-back "Back"))
-  ;; not a great key as a mnemonic, but easy to press quickly
-  (keymap-set dumb-jump-mode-map "C-M-y" #'dumb-jump-hydra/body))
+;; (when (and (require 'hydra nil :noerror)
+;;            (require 'dumb-jump nil :noerror))
+;;   (defhydra dumb-jump-hydra (:color blue :columns 3)
+;;     "Dumb Jump"
+;;     ("j" dumb-jump-go "Go")
+;;     ("o" dumb-jump-go-other-window "Other window")
+;;     ("e" dumb-jump-go-prefer-external "Go external")
+;;     ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
+;;     ("i" dumb-jump-go-prompt "Prompt")
+;;     ("l" dumb-jump-quick-look "Quick look")
+;;     ("b" dumb-jump-back "Back"))
+;;   ;; not a great key as a mnemonic, but easy to press quickly
+;;   (keymap-set dumb-jump-mode-map "C-M-y" #'dumb-jump-hydra/body))
 
-;; use xref
-(with-eval-after-load 'dumb-jump
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+;; ;; use xref
+;; (with-eval-after-load 'dumb-jump
+;;   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 
 
@@ -189,6 +189,11 @@ also enables undo functionality if the window layout changes."
 (keymap-set 'crafted-windows-key-map "p" 'windmove-up)
 (keymap-set 'crafted-windows-key-map "b" 'windmove-left)
 (keymap-set 'crafted-windows-key-map "f" 'windmove-right)
+
+(keymap-set 'crafted-windows-key-map "M-n" 'windmove-swap-states-down)
+(keymap-set 'crafted-windows-key-map "M-p" 'windmove-swap-states-up)
+(keymap-set 'crafted-windows-key-map "M-b" 'windmove-swap-states-left)
+(keymap-set 'crafted-windows-key-map "M-f" 'windmove-swap-states-right)
 
 (keymap-global-set crafted-windows-prefix-key 'crafted-windows-key-map)
 
