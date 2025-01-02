@@ -7,7 +7,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Cascadia Code" :foundry "outline" :slant normal :weight normal :height 110 :width normal)))))
 
-(when window-system
+(if window-system
   (progn
     (pixel-scroll-precision-mode)
     ;; (global-tab-line-mode)
