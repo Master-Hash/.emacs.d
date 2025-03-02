@@ -30,6 +30,7 @@
   (xterm-mouse-mode)
   (global-window-tool-bar-mode))
 
+(require 'kinsoku)
 (global-word-wrap-whitespace-mode t)
 (global-visual-line-mode t)
 (global-visual-wrap-prefix-mode)

@@ -32,6 +32,7 @@
                    font-lock
                    help-mode
                    icons
+                   kinsoku
                    menu-bar tool-bar
                    misc
                    mouse
