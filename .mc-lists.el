@@ -16,6 +16,7 @@
         end-of-visual-line
         forward-sexp
         global-visual-line-mode
+        hash--beginning-of-line
         yank-rectangle
         ))
 
@@ -23,9 +24,16 @@
       '(
         ace-swap-window
         describe-key
+        describe-variable
         ignore
+        keyboard-escape-quit
         kill-region
+        magit-blame
+        magit-blame-addition
         mc/mark-next-lines
+        mouse-drag-mode-line
+        mouse-select-window
         pixel-scroll-precision
         undo-redo
+        whitespace-mode
         ))

@@ -9,7 +9,8 @@
 
 (if window-system
   (progn
-    (pixel-scroll-precision-mode)
+    (pixel-scroll-precision-mode +1)
+    (blink-cursor-mode +1)
     ;; (global-tab-line-mode)
     ;; (global-hl-line-mode)
     ;; (set-frame-width (selected-frame) 140)
@@ -17,8 +18,12 @@
     ;; https://emacs-china.org/t/emacs/15676
     ;; (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "霞鹜文楷" :height 110))
     (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "Microsoft Yahei UI" :height 110))
-    ;; (custom-set-variables
-    ;; '(minimap-mode t))
+    (set-fontset-font t '(#xe5fa . #xe6b7) (font-spec :family "Symbols Nerd Font Mono" :height 110))
+    (set-fontset-font t '(#xe700 . #xe8ef) (font-spec :family "Symbols Nerd Font Mono" :height 110))
+    (set-fontset-font t '(#xea60 . #xec1e) (font-spec :family "Symbols Nerd Font Mono" :height 110))
+    (set-fontset-font t '(#xf000 . #xf2ff) (font-spec :family "Symbols Nerd Font Mono" :height 110))
+    (set-fontset-font t '(#xf400 . #xf4a9) (font-spec :family "Symbols Nerd Font Mono" :height 110))
+    (set-fontset-font t '(#xf0001 . #xf1af0) (font-spec :family "Symbols Nerd Font Mono" :height 110))
     (global-whitespace-mode t)
     ;; (setq-default whitespace-style '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab tab-mark newline-mark missing-newline-at-eof))
     )
@@ -26,8 +31,14 @@
   (global-window-tool-bar-mode))
 
 (global-word-wrap-whitespace-mode t)
+(global-visual-line-mode t)
 (global-visual-wrap-prefix-mode)
-(global-visual-line-mode 't)
+;; (add-hook 'visual-wrap-prefix-mode-hook (lambda ()
+;;                                           (setq-local mouse-wheel-tilt-scroll nil)))
+;; `https://github.com/minad/vertico/issues/278'
+;; `https://www.emacswiki.org/emacs/VisualLineMode'
+(add-hook 'minibuffer-setup-hook (lambda ()
+                                   (visual-line-mode -1)))
 (global-completion-preview-mode)
 (which-key-mode)
 
@@ -45,6 +56,7 @@
 (luna-if-dump
     (progn
       (setq load-path luna-dumped-load-path)
+      (setq native-comp-enable-subr-trampolines t)
       (menu-bar-mode)
       (tool-bar-mode)
       (global-font-lock-mode)
@@ -114,10 +126,16 @@
 
 ;; https://github.com/minad/corfu#configuration
 (use-package emacs
+  :hook ((dired-mode . (lambda ()
+                         (whitespace-mode -1))))
   :custom
   ;; Emacs 30 and newer: Disable Ispell completion function.
   ;; Try `cape-dict' as an alternative.
-  (text-mode-ispell-word-completion nil))
+  (text-mode-ispell-word-completion nil)
+  ;; (mouse-wheel-tilt-scroll t)
+
+  (mouse-wheel-progressive-speed nil) ;; fix pixel-scroll-precision
+  )
 
 (use-package ligature
   :ensure t
@@ -177,6 +195,23 @@
   :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
   :when window-system)
 
+(use-package doom-modeline
+  :ensure t
+  :init
+  (setq doom-modeline-enable-word-count t)
+  (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+  (setq doom-modeline-project-name t)
+  (doom-modeline-mode 1))
+
+;; (use-package minimap
+;;   :ensure t
+;;   :config
+;;   (setq minimap-minimum-width 10)
+;;   (setq minimap-width-fraction 0.1)
+;;   (setq minimap-window-location 'right)
+;;   (minimap-mode +1)
+;;   :when window-system)
+
 (use-package symbol-overlay
   ;; :ensure
   ;; I prefer eglot qaq
@@ -195,12 +230,7 @@
 
 ;; WTF? I wish markdown-ts-mode could be built-in
 (use-package markdown-ts-mode
-  :mode ("\\.md\\'" . markdown-ts-mode)
-  :defer t
-  :config
-  (add-to-list 'treesit-language-source-alist '(markdown "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src"))
-  (add-to-list 'treesit-language-source-alist '(markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src"))
-  )
+  :mode ("\\.md\\'" . markdown-ts-mode))
 
 (use-package powershell-ts-mode
   :vc (:url "git@github.com:dmille56/powershell-ts-mode.git"
@@ -217,9 +247,17 @@
   :bind (("M-<up>" . move-text-up)
          ("M-<down>" . move-text-down)))
 
-(use-package expand-region
+;; (use-package expand-region
+;;   :ensure
+;;   :bind (("C-=" . er/expand-region)))
+
+(use-package expreg
+  ;; :vc (:url "git@github.com:casouri/expreg.git"
+  ;;           :branch "master"
+  ;;           :rev :newest)
   :ensure
-  :bind (("C-=" . er/expand-region)))
+  :bind (("C-=" . expreg-expand)
+         ("C--" . expreg-contract)))
 
 (use-package multiple-cursors
   :ensure
@@ -230,15 +268,115 @@
   :config
   (global-unset-key (kbd "M-<down-mouse-1>")))
 
+;; (use-package ultra-scroll
+;;   :vc (:url "git@github.com:jdtsmith/ultra-scroll.git"
+;;             :branch "master"
+;;             :rev :newest)
+;;   :ensure
+;;   :init
+;;   (setq scroll-conservatively 101 ; important!
+;;         scroll-margin 0)
+;;   :config
+;;   (ultra-scroll-mode 1))
+
 (use-package imenu-list
   :ensure
   :bind (("C-'" . imenu-list-smart-toggle)
-         ("C-c b" . imenu-list-smart-toggle)))
+         ;; ("C-c i" . imenu-list-smart-toggle)
+         ))
+
+;; (use-package dirvish
+;;   :vc (:url "git@github.com:alexluigit/dirvish.git"
+;;             :branch "main"
+;;             :rev :newest)
+;;   :ensure
+;;   :commands (dired)
+;;   :bind (("C-c d" . dirvish-side))
+;;   :config
+;;   (dirvish-override-dired-mode))
+
+(defun hash--dired-sidebar-mouse-subtree-toggle-or-find-file (event)
+  "Handle a mouse click EVENT in `dired-sidebar'.
+
+For directories, if `dired-sidebar-cycle-subtree-on-click' is true,
+cycle the directory.
+
+Otherwise, behaves the same as if user clicked on a file.
+
+For files, use `dired-sidebar-find-file'.
+
+This uses the same code as `dired-mouse-find-file-other-window' to find
+the relevant file-directory clicked on by the mouse."
+  (interactive "e")
+  (let (window pos file)
+    (save-excursion
+      (setq window (posn-window (event-end event))
+            pos (posn-point (event-end event)))
+      (if (not (windowp window))
+          (error "No file chosen"))
+      (set-buffer (window-buffer window))
+      (goto-char pos)
+      (setq file (dired-get-file-for-visit)))
+    (with-selected-window window
+      (if (and dired-sidebar-cycle-subtree-on-click
+               (file-directory-p file)
+               (not (string-suffix-p "." file)))
+          (dired-sidebar-subtree-toggle)
+        (dired-sidebar-find-file file)))))
+
+(use-package dired-sidebar
+  :ensure
+  :commands (dired-sidebar-toggle-sidebar)
+  :bind (("C-c d" . dired-sidebar-toggle-sidebar)
+         (:map dired-sidebar-mode-map
+               ("C-M-d" . dired-subtree-down)
+               ("C-M-n" . dired-subtree-next-sibling)
+               ("C-M-p" . dired-subtree-previous-sibling)
+               ("C-M-u" . dired-subtree-up)
+               ;; ("<mouse-1>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
+               ;; ("<down-mouse-1>" . nil)
+               ;; ("<mouse-2>" . nil)
+               ("<mouse-2>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
+               ))
+  :custom ((dired-sidebar-use-custom-font t))
+  ;; :custom-face (dired-sidebar-face ((t (:height 70))))
+  :hook ((dired-sidebar-mode . (lambda ()
+                                 (display-line-numbers-mode -1)
+                                 (visual-wrap-prefix-mode -1)
+                                 (visual-line-mode -1)
+                                 (whitespace-mode -1)))
+         (dired-sidebar-mode . (lambda ()
+                                 (setq-local mouse-wheel-tilt-scroll t))))
+  :config
+  (setq dired-sidebar-face `(:family "Noto Sans CJK SC" :height 100))
+  (setq dired-sidebar-width 25))
+
+;; (use-package ibuffer-sidebar
+;;   :ensure
+;;   :commands (ibuffer-sidebar-toggle-sidebar)
+;;   :bind ("C-c b" . ibuffer-sidebar-toggle-sidebar))
 
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package vundo
+  :ensure t
+  :bind (("C-c u" . vundo)))
+
+(use-package diff-hl
+  :ensure
+  ;; :defer 0.5
+  ;; :hook (vc-mode-line . (lambda ()
+
+  ;;                         ))
+  :custom
+  (diff-hl-flydiff-delay 0.1)
+  :config
+  (diff-hl-flydiff-mode)
+  (global-diff-hl-show-hunk-mouse-mode)
+  (global-diff-hl-mode)
+)
 ;; (use-package benchmark-init
 ;;   :ensure t
 ;;   ;; :disabled
@@ -271,25 +409,82 @@
 
 ;; (package-install-selected-packages :noconfirm)
 
+(use-package python-ts-mode
+  :mode "\\.py\\'"
+  :hook (python-ts-mode . (lambda ()
+                            (setq-local display-fill-column-indicator-column 80)
+                            (display-fill-column-indicator-mode))))
+  ;; :init
+  ;; (add-hook 'python-ts-mode-hook (apply-partially
+  ;;                                 #'setq-local display-fill-column-indicator-column
+(use-package rust-ts-mode
+  :mode "\\.rs\\'"
+  ;; (display-fill-column-indicator-mode t)
+  :hook (rust-ts-mode . (lambda ()
+                          (setq-local display-fill-column-indicator-column 100)
+                          (display-fill-column-indicator-mode)))
+  ;; :init
+  ;; (add-hook 'rust-ts-mode-hook (apply-partially
+  ;;                                 #'setq-local display-fill-column-indicator-column 100))
+  )
+
+;; (define-derived-mode lalrpop-mode rust-ts-mode "Lalrpop")
+;; (add-to-list 'auto-mode-alist '("\\.lalrpop\\'" . lalrpop-mode))
+
+;; I don't know why...
+;; (use-package elm-mode
+;;   :ensure
+;;   :mode "\\.lalrpop\\'")
+
+(setq magit-git-executable "C:/msys64/clang64/bin/git.exe")
+(setq magit-format-file-function #'magit-format-file-nerd-icons)
+
+;; (use-package magit
+;;   :ensure t
+;;   :after nerd-icons
+;;   :custom
+;;   ((magit-format-file-function #'magit-format-file-nerd-icons)
+;;    (magit-git-executable "C:/msys64/clang64/bin/git.exe")))
+
 (use-package eglot
   :defer t
-  :hook ((c-ts-mode c++-ts-mode rust-ts-mode
-          python-ts-mode js-ts-mode
+  :hook ((c-ts-mode c++-ts-mode
+          python-ts-mode js-ts-mode rust-ts-mode
           typescript-ts-mode tsx-ts-mode
           bash-ts-mode go-ts-mode
           go-mod-ts-mode markdown-ts-mode
-          yaml-ts-mode powershell-ts-mode) . eglot-ensure)
+          yaml-ts-mode
+          ;; powershell-ts-mode
+          ) . eglot-ensure)
+  ;; :hook ((rust-ts-mode) . (lambda ()
+  ;;                           (message "%s" major-mode)
+  ;;                           (unless (eq major-mode 'lalrpop-mode)
+  ;;                             (eglot-ensure))))
   ;; :bind ("M-F" . eglot-format)
   :bind (:map eglot-mode-map
               ("M-F" . eglot-format))
   :config
+  (setq-default eglot-workspace-configuration
+                '(:typescript
+                  (:format
+                   (:indentSize 2
+                    :semicolons "insert"))))
   ;; (define-key eglot--managed-mode (kbd "M-F") #'eglot-format)
   (if (eq system-type 'windows-nt)
     (progn
       (add-to-list 'eglot-server-programs
                    `(typescript-ts-base-mode
                     .
-                    ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio")
+                    ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio"
+                                            :initializationOptions
+                                            (:preferences
+                                             (:quotePreference "double"
+                                              :importModuleSpecifier "relative"
+                                              :importModuleSpecifierEnding "js"
+                                              :preferTypeOnlyAutoImports t
+                                              :includeInlayParameterNameHints "all")
+                                             :locale "zh-CN")
+                                            )
                                             ("vtsls.cmd" "--stdio")
                                             ("deno" "lsp")))))
       (add-to-list 'eglot-server-programs
@@ -316,11 +511,11 @@
                                      ))) ;; basedpyright or delance
       (add-to-list 'eglot-server-programs
                    '(markdown-ts-mode . ("marksman"))) ;; brilliant
-      (add-to-list 'eglot-server-programs
-                   '(powershell-ts-mode . ("pwsh" "-NoLogo"
-                                        "-NoProfile"
-                                        "-Command"
-                                        "~/PowerShellEditorServices/PowerShellEditorServices/Start-EditorServices.ps1 -Stdio")))
+      ;; (add-to-list 'eglot-server-programs
+      ;;              '(powershell-ts-mode . ("pwsh" "-NoLogo"
+      ;;                                   "-NoProfile"
+      ;;                                   "-Command"
+      ;;                                   "~/PowerShellEditorServices/PowerShellEditorServices/Start-EditorServices.ps1 -Stdio")))
       (add-to-list 'eglot-server-programs
                '(c-ts-mode . ("C:\\msys64\\clang64\\bin\\clangd.exe"
                               "--compile-commands-dir=build"
@@ -341,30 +536,15 @@
                                 "--function-arg-placeholders")))
       (add-to-list 'eglot-server-programs
                    '(rust-ts-mode . ("C:\\Users\\hash\\.rustup\\toolchains\\stable-x86_64-pc-windows-gnu\\bin\\rust-analyzer.exe" :initializationOptions
-                                 (:cargo
-                                  (:extraEnv
-                                   (:CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER "C:\\msys64\\ucrt64\\bin\\gcc.exe"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS "-C link-arg=-fuse-ld=lld -C target-cpu=x86-64-v3"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_LLVMGNU_LINKER "C:\\msys64\\clang64\\bin\\clang.exe"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_LLVMGNU_RUSTFLAGS "-Clink-arg=-fuse-ld=lld -C target-cpu=x86-64-v3"
-                                    :CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER "C:\\msys64\\clang64\\bin\\ld.lld.exe"
-                                    :CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUSTFLAGS "-C target-feature=+simd128")
-                                   ;; :target "x86_64-pc-windows-gnullvm")
-                                   :target "x86_64-pc-windows-gnu")
-                                  :checkOnSave t
-                                  :check (:command "clippy")
-                                  :server
-                                  (:extraEnv
-                                   (:AR_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\llvm-ar.exe"
-                                    :CC_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\clang.exe"
-                                    :CFLAGS_x86_64-pc-windows-gnullvm "-march=x86-64-v3 -fvisibility=hidden -flto=thin"
-                                    :CXX_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\clang++.exe"
-                                    :CXXFLAGS_x86_64-pc-windows-gnullvm "-march=x86-64-v3 -fvisibility=hidden -flto=thin")
-                                   )
-                                  :inlayHints
-                                  (:typeHints
-                                   (:enable t))
-                                  )))))
+                                     (:cargo
+                                      ;; (:target "x86_64-pc-windows-gnullvm")
+                                      (:target "x86_64-pc-windows-gnu")
+                                      :checkOnSave t
+                                      :check (:command "clippy")
+                                      :inlayHints
+                                      (:typeHints
+                                       (:enable t))
+                                      )))))
       (add-to-list 'eglot-server-programs
                    '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
                                      "pyright-langserver" "--stdio"
@@ -426,23 +606,48 @@
 
 
 ;; (remove-hook 'after-init-hook 'recentf-mode)
-;; (setq-default word-wrap t)
 ;; (global-set-key (kbd "C-=") 'er/expand-region)
 ;; (global-set-key (kbd "C-h") 'delete-backward-char)
-(global-set-key (kbd "C-y") #'undo-redo)
-(global-set-key (kbd "C-/") #'comment-line)
-(global-set-key (kbd "M-p") #'scroll-down-line)
-(global-set-key (kbd "M-n") #'scroll-up-line)
-;; (global-set-key (kbd "C-<tab>") #'tab-line-switch-to-next-tab)
-;; (global-set-key (kbd "C-S-<tab>") #'tab-line-switch-to-prev-tab)
+
+;; `Todo': Scroll the window where the mouse current is
+;; (keymap-global-set "<wheel-left>" #'(lambda ()
+;;                                       (interactive)
+;;                                       (unless visual-wrap-prefix-mode
+;;                                         (scroll-left 1))
+;;                                       ))
+;; (keymap-global-set "<wheel-right>" #'(lambda ()
+;;                                        (interactive)
+;;                                        (unless visual-wrap-prefix-mode
+;;                                          (scroll-right 1))
+;;                                        ))
+(keymap-global-set "C-y" #'undo-redo)
+(keymap-global-set "C-/" #'comment-line)
+(keymap-global-set "M-p" #'scroll-down-line)
+(keymap-global-set "M-n" #'scroll-up-line)
+(keymap-global-set "M-S-<up>" #'(lambda ()
+                                  (interactive)
+                                  (setopt duplicate-line-final-position 0)
+                                  (duplicate-line)
+                                  (setopt duplicate-line-final-position 1)
+                                  ))
+(keymap-global-set "M-S-<down>" #'(lambda ()
+                                    (interactive)
+                                    (setopt duplicate-line-final-position 1)
+                                    (duplicate-line)
+                                    ))
+;; (keymap-global-set "C-<tab>" #'tab-line-switch-to-next-tab)
+;; (keymap-global-set "C-S-<tab>" #'tab-line-switch-to-prev-tab)
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c-or-c++-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
-(global-set-key (kbd "C-c i")
+(add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
+(keymap-global-set "C-c i"
                 (lambda ()
                   (interactive)
                   (find-file user-init-file)))
@@ -469,7 +674,28 @@ Version 2016-08-11"
 
 ;; run query before killing if buffer is custom-scratch-buffer
 (add-to-list 'kill-buffer-query-functions #'custom-scratch-buffer-kill-query-function)
-(global-set-key (kbd "C-c n") #'custom-scratch-buffer-create)
+(keymap-global-set "C-c n" #'custom-scratch-buffer-create)
+
+(defun hash--beginning-of-line (&optional n)
+  "如果当前不在软行首，则跳转到软行首。否则跳转到硬行首。"
+  (interactive "^p")
+  (or n (setq n 1))
+  (if (= (point) (save-excursion (beginning-of-visual-line) (point)))
+      (move-beginning-of-line n)
+    (beginning-of-visual-line n)))
+
+(defun hash--end-of-line (&optional n)
+  "如果当前不在软行尾，则跳转到软行尾。否则跳转到硬行尾。"
+  (interactive "^p")
+  (or n (setq n 1))
+  (if (= (point) (save-excursion (end-of-visual-line) (point)))
+      (move-end-of-line n)
+    (end-of-visual-line n)))
+
+(keymap-set visual-line-mode-map "C-a" #'hash--beginning-of-line)
+(keymap-set visual-line-mode-map "<home>" #'hash--beginning-of-line)
+(keymap-set visual-line-mode-map "C-e" #'hash--end-of-line)
+(keymap-set visual-line-mode-map "<end>" #'hash--end-of-line)
 
 ;; `https://caiorss.github.io/Emacs-Elisp-Programming/Emacs_On_Windows.html'
 ;; (defun run-powershell ()
@@ -536,8 +762,12 @@ Version 2016-08-11"
  '(cursor-type 'bar)
  '(delete-selection-mode t)
  '(dictionary-server "dict.org")
+ '(diff-hl-flydiff-delay 0.1)
  '(dired-auto-revert-buffer t t)
  '(dired-dwim-target t t)
+ '(display-line-numbers-width-start nil)
+ '(duplicate-line-final-position 1)
+ '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-window-setup-function 'ediff-setup-windows-plain t)
  '(eglot-autoshutdown t)
  '(electric-pair-mode t)
@@ -553,20 +783,29 @@ Version 2016-08-11"
  '(ispell-dictionary "en")
  '(kill-do-not-save-duplicates t)
  '(load-prefer-newer t)
+ '(magit-ediff-dwim-show-on-hunks t)
  '(marginalia-annotators
    '(marginalia-annotators-heavy marginalia-annotators-light nil) t)
+ '(mouse-prefer-closest-glyph t)
+ '(org-hide-emphasis-markers nil)
  '(package-archive-priorities '(("gnu" . 99) ("nongnu" . 80) ("melpa" . 70)))
  '(package-quickstart t)
  '(package-selected-packages nil)
- '(package-vc-selected-packages '((emt :url "git@github.com:roife/emt.git")))
+ '(package-vc-selected-packages
+   '((dirvish :url "git@github.com:alexluigit/dirvish.git" :branch "main")
+     (emt :url "git@github.com:roife/emt.git")))
  '(pixel-scroll-precision-interpolate-page t)
+ '(pixel-scroll-precision-use-momentum t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
+ '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(rust-mode-treesitter-derive t)
+ '(scheme-program-name "guile")
  '(scroll-bar-mode nil)
  '(scroll-conservatively 101)
  '(scroll-margin 0)
  '(scroll-preserve-screen-position t)
+ '(scroll-step 1)
  '(speedbar-frame-parameters
    '((name . "speedbar") (title . "speedbar") (minibuffer)
      (border-width . 2) (menu-bar-lines . 0) (tool-bar-lines . 0)
@@ -574,6 +813,19 @@ Version 2016-08-11"
  '(switch-to-buffer-in-dedicated-window 'pop)
  '(switch-to-buffer-obey-display-actions t)
  '(tab-always-indent 'complete)
+ '(terminal-here-terminal-command-table
+   '((urxvt "urxvt") (gnome-terminal "gnome-terminal")
+     (gnome-console "kgx") (alacritty "alacritty") (xst "xst")
+     (st . terminal-here--find-and-run-st) (konsole "konsole")
+     (qterminal "qterminal") (xterm "xterm") (sakura "sakura")
+     (xfce4-terminal "xfce4-terminal") (terminator "terminator")
+     (terminology "terminology") (tilix "tilix") (kitty "kitty")
+     (foot "foot") (ghostty "ghostty")
+     (x-terminal-emulator "x-terminal-emulator")
+     (terminal-app "Terminal.app") (iterm2 "iTerm.app")
+     (cmd "cmd.exe" "/C" "start" "cmd.exe")
+     (pwsh "cmd.exe" "/C" "start" "pwsh.exe")))
+ '(terminal-here-windows-terminal-command 'pwsh)
  '(treesit-auto-langs
    '(c cpp bash css html python rust javascript typescript json css
        dockerfile yaml sql toml))
@@ -583,5 +835,8 @@ Version 2016-08-11"
  '(whitespace-style
    '(face trailing tabs spaces indentation space-after-tab
           space-before-tab tab-mark))
+ '(word-wrap-by-category t)
  '(xref-show-definitions-function 'xref-show-definitions-completing-read t))
+
+(put 'scroll-left 'disabled nil)
 

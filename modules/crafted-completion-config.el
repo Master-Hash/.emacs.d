@@ -34,10 +34,12 @@
 
 (use-package vertico
   :ensure
+  ;; :defer
+  ;; :commands (execute-extended-command)
   :custom
   (vertico-cycle t)
-  :config
-  (vertico-mode 1)
+  :init
+  (vertico-mode +1)
   )
 
 
@@ -53,12 +55,15 @@
 (use-package marginalia
   :ensure
   ;; :defer 0.02
+  ;; :after (vertico)
+  :init
+  (marginalia-mode +1)
   :config
   (customize-set-variable 'marginalia-annotators
                           '(marginalia-annotators-heavy
                             marginalia-annotators-light
                             nil))
-  (marginalia-mode 1))
+  )
 
 
 ;;; Consult
@@ -71,13 +76,38 @@
 
 ;;   (setq completion-in-region-function #'consult-completion-in-region))
 
+;; (defun hash--consult-line-with-region ()
+;;   (interactive)
+
+;;     )
+
 (use-package consult
   :ensure
   :defer
-  :bind (("C-s" . consult-line)
+  :commands (isearch-forward)
+  ;; :custom (consult-line-start-from-top t)
+  :bind (
+         ("C-s" . consult-line)
+         ("M-g g" . consult-goto-line)
+         ("C-x b" . consult-buffer)
+         ("C-c r g" . consult-ripgrep)
+         ;; (:map )
          (:map minibuffer-local-map
                ("C-r" . consult-history)))
   :config
+  (consult-customize
+   consult-ripgrep
+   :preview-key '(:debounce 0.2 any)
+   consult-line
+   ;; `https://www.reddit.com/r/emacs/comments/17t1yjx/consultline_with_cw/'
+   ;; :initial (thing-at-point 'symbol)
+   :initial (if (use-region-p)
+                (buffer-substring (region-beginning) (region-end))
+              ;; (thing-at-point 'symbol)
+              ""
+              )
+   ;; :add-history (seq-some #'thing-at-point '(region symbol))
+   :preview-key '(:debounce 0.2 any))
   (setq completion-in-region-function #'consult-completion-in-region))
 
 
@@ -143,7 +173,6 @@
 
 (use-package corfu
   :ensure
-  :defer t
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -152,18 +181,20 @@
               ("M-p" . corfu-popupinfo-scroll-down)
               ("M-n" . corfu-popupinfo-scroll-up)
               ("M-d" . corfu-popupinfo-toggle))
+  :init
+  (global-corfu-mode 1)
   :config
   ;; delete when Emacs 31
   (unless (display-graphic-p)
     (when (require 'corfu-terminal nil :noerror)
       (corfu-terminal-mode +1)))
-  (global-corfu-mode 1)
   (when (require 'corfu-popupinfo nil :noerror)
-    (corfu-popupinfo-mode 1)
+    (corfu-popupinfo-mode +1)
     (eldoc-add-command #'corfu-insert)
-    (keymap-set corfu-map "M-p" #'corfu-popupinfo-scroll-down)
-    (keymap-set corfu-map "M-n" #'corfu-popupinfo-scroll-up)
-    (keymap-set corfu-map "M-d" #'corfu-popupinfo-toggle))
+    ;; (keymap-set corfu-map "M-p" #'corfu-popupinfo-scroll-down)
+    ;; (keymap-set corfu-map "M-n" #'corfu-popupinfo-scroll-up)
+    ;; (keymap-set corfu-map "M-d" #'corfu-popupinfo-toggle)
+    )
   )
 
 

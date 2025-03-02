@@ -17,8 +17,9 @@ tree-sitter/
 history
 recentf
 /emacs.pdmp
-/modules/*.dll
-/modules/*.so
-/modules/*.dylib
+*.dll
+*.so
+*.dylib
 /package-quickstart.el
+/org-persist
 

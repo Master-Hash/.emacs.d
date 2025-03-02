@@ -68,7 +68,7 @@ C:\Windows\System32\cmd.exe /c "SET LANG=zh_CN.UTF-8&& SET Path=%path%;C:\msys64
 ## 改进空间
 
 - [x] Wait for Emacs 30: `visual-wrap-prefix-mode`; ts-mode 继承；`tab-line-mode`（划掉，不喜欢）
-- [x] 懒加载 eglot & tree-sitter（别的懒得管了，我自己写的 dll 加载都比他慢）；
+- [x] 懒加载；
 - [x] ~~使 vtsls 和 pyright 正常工作~~ 已经用别的部分代替；
 - [ ] ~~使 client/deamon 模式正常工作~~ 目前冷启动足够快。
 - [ ] Try GUD with LLDB；

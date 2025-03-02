@@ -6,7 +6,7 @@
 (load "c:/Users/hash/AppData/Roaming/.emacs.d/modules/crafted-init-config")
 ;; (require 'crafted-defaults-config)
 ;; (require 'crafted-completion-config)
-
+(setq native-comp-enable-subr-trampolines nil)
 (require 'package)
 ;; load autoload files and populate load-path’s
 (package-initialize)
@@ -33,6 +33,7 @@
                    help-mode
                    icons
                    menu-bar tool-bar
+                   misc
                    mouse
                    package-vc
                    paren
@@ -61,7 +62,7 @@
 
                    ;; For elpa modules, eln and preload contradict each other
                    ;; choose carefully which is more important
-                   vertico orderless
+                   vertico orderless corfu corfu-popupinfo
                    marginalia
                    nerd-icons
                    nerd-icons-completion
@@ -71,6 +72,14 @@
                    symbol-overlay
                    tree-widget
                    wakatime-mode
+                   diff-hl
+                   ;; s
+                   ;; f
+                   ;; shrink-path
+                   doom-modeline
+                   ;; cl-lib
+                   ;; seq
+                   ;; subr-x
                    ;; Not allowed built-ins:
                    ;; password
 
