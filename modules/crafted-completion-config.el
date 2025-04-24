@@ -58,11 +58,6 @@
   ;; :after (vertico)
   :init
   (marginalia-mode +1)
-  :config
-  (customize-set-variable 'marginalia-annotators
-                          '(marginalia-annotators-heavy
-                            marginalia-annotators-light
-                            nil))
   )
 
 
@@ -83,20 +78,27 @@
 
 (use-package consult
   :ensure
-  :defer
-  :commands (isearch-forward)
+  ;; :defer
+  ;; :commands (isearch-forward)
   ;; :custom (consult-line-start-from-top t)
   :bind (
          ("C-s" . consult-line)
          ("M-g g" . consult-goto-line)
          ("C-x b" . consult-buffer)
+         ("C-x p b" . consult-project-buffer)
          ("C-c r g" . consult-ripgrep)
-         ;; (:map )
+         ("C-c f d" . consult-fd)
          (:map minibuffer-local-map
                ("C-r" . consult-history)))
+  :init
+  (setopt xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
   :config
   (consult-customize
-   consult-ripgrep
+   consult-ripgrep consult-theme consult-ripgrep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
    :preview-key '(:debounce 0.2 any)
    consult-line
    ;; `https://www.reddit.com/r/emacs/comments/17t1yjx/consultline_with_cw/'
@@ -107,8 +109,7 @@
               ""
               )
    ;; :add-history (seq-some #'thing-at-point '(region symbol))
-   :preview-key '(:debounce 0.2 any))
-  (setq completion-in-region-function #'consult-completion-in-region))
+   :preview-key '(:debounce 0.2 any)))
 
 
 ;;; Orderless
@@ -120,10 +121,9 @@
 
 (use-package orderless
   :ensure
-  :config
-  (customize-set-variable 'completion-styles '(orderless basic))
-  (customize-set-variable 'completion-category-overrides
-                          '((file (styles . (partial-completion))))))
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 
 ;;; Embark
@@ -144,10 +144,20 @@
   :defer t
   :bind (("C-h b" . embark-bindings)
          ("C-h /" . embark-act))
-  :config
+  :init
   (setq prefix-help-command #'embark-prefix-help-command)
-  (with-eval-after-load 'embark-consult
-    (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode)))
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 
 ;;; Corfu
@@ -227,28 +237,19 @@
 (use-package cape
   :ensure
   :defer t
+  :bind ("C-c p" . cape-prefix-map)
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
   :config
-  ;; Setup Cape for better completion-at-point support and more
-
-  ;; Add useful defaults completion sources from cape
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-
-  ;; Silence the pcomplete capf, no errors or messages!
-  ;; Important for corfu
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-
-  ;; Ensure that pcomplete does not write to the buffer
-  ;; and behaves as a pure `completion-at-point-function'.
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
-
   ;; No auto-completion or completion-on-quit in eshell
   (defun crafted-completion-corfu-eshell ()
     "Special settings for when using corfu with eshell."
     (setq-local corfu-quit-at-boundary t
                 corfu-quit-no-match t
                 corfu-auto nil)
-    (corfu-mode))
+    (corfu-mode 1))
   (add-hook 'eshell-mode-hook #'crafted-completion-corfu-eshell)
   )
 

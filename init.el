@@ -28,7 +28,8 @@
     ;; (setq-default whitespace-style '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab tab-mark newline-mark missing-newline-at-eof))
     )
   (xterm-mouse-mode)
-  (global-window-tool-bar-mode))
+  (global-window-tool-bar-mode)
+  (tool-bar-mode))
 
 (require 'kinsoku)
 (global-word-wrap-whitespace-mode t)
@@ -116,7 +117,8 @@
     (progn
       (when window-system (set-frame-parameter nil 'alpha 0.96))
       (setq default-directory (concat (getenv "APPDATA") "\\..\\..\\"))
-      (setq wakatime-cli-path "%APPDATA%\\..\\..\\go\\bin\\wakatime-cli.exe")
+      (setopt wakatime-cli-path "C:\\msys64\\clang64\\bin\\wakatime.exe")
+      (setopt magit-git-executable "C:/msys64/clang64/bin/git.exe")
       ;; (setq ispell-alternate-dictionary "~/../../Documents/The_Chambers_Thesaurus.txt")
       (set-clipboard-coding-system 'utf-16-le)
       (set-selection-coding-system 'utf-16-le))
@@ -137,6 +139,9 @@
 
   (mouse-wheel-progressive-speed nil) ;; fix pixel-scroll-precision
   )
+
+(use-package wakatime-mode
+  :ensure t)
 
 (use-package ligature
   :ensure t
@@ -199,10 +204,16 @@
 (use-package doom-modeline
   :ensure t
   :init
-  (setq doom-modeline-enable-word-count t)
-  (setq doom-modeline-buffer-file-name-style 'relative-from-project)
-  (setq doom-modeline-project-name t)
-  (doom-modeline-mode 1))
+  (setopt doom-modeline-project-detection 'project)
+  (setopt doom-modeline-enable-word-count t)
+  (setopt doom-modeline-buffer-file-name-style 'relative-from-project)
+  ;; (setopt doom-modeline-project-name t)
+  (setopt doom-modeline-lsp nil)
+  (doom-modeline-mode 1)
+  (add-to-list
+   'mode-line-misc-info
+   `(eglot--managed-mode (" [" eglot--mode-line-format "] "))
+   ))
 
 ;; (use-package minimap
 ;;   :ensure t
@@ -214,7 +225,7 @@
 ;;   :when window-system)
 
 (use-package symbol-overlay
-  ;; :ensure
+  :ensure
   ;; I prefer eglot qaq
   ;;`https://github.com/wolray/symbol-overlay/issues/82'
   :hook ((emacs-lisp-mode . symbol-overlay-mode)))
@@ -233,12 +244,12 @@
 (use-package markdown-ts-mode
   :mode ("\\.md\\'" . markdown-ts-mode))
 
-(use-package powershell-ts-mode
-  :vc (:url "git@github.com:dmille56/powershell-ts-mode.git"
-            :branch "main"
-            :rev :newest)
-  :mode ("\\.ps1\\'" . powershell-ts-mode)
-  :defer t)
+;; (use-package powershell-ts-mode
+;;   :vc (:url "git@github.com:dmille56/powershell-ts-mode.git"
+;;             :branch "main"
+;;             :rev :newest)
+;;   :mode ("\\.ps1\\'" . powershell-ts-mode)
+;;   :defer t)
 
 (use-package move-text
   ;; `https://www.emacswiki.org/emacs/MoveLine'
@@ -437,7 +448,6 @@ the relevant file-directory clicked on by the mouse."
 ;;   :ensure
 ;;   :mode "\\.lalrpop\\'")
 
-(setq magit-git-executable "C:/msys64/clang64/bin/git.exe")
 (setq magit-format-file-function #'magit-format-file-nerd-icons)
 
 ;; (use-package magit
@@ -538,8 +548,8 @@ the relevant file-directory clicked on by the mouse."
       (add-to-list 'eglot-server-programs
                    '(rust-ts-mode . ("C:\\Users\\hash\\.rustup\\toolchains\\stable-x86_64-pc-windows-gnu\\bin\\rust-analyzer.exe" :initializationOptions
                                      (:cargo
-                                      ;; (:target "x86_64-pc-windows-gnullvm")
-                                      (:target "x86_64-pc-windows-gnu")
+                                      (:target "x86_64-pc-windows-gnullvm")
+                                      ;; (:target "x86_64-pc-windows-gnu")
                                       :checkOnSave t
                                       :check (:command "clippy")
                                       :inlayHints
@@ -623,6 +633,7 @@ the relevant file-directory clicked on by the mouse."
 ;;                                        ))
 (keymap-global-set "C-y" #'undo-redo)
 (keymap-global-set "C-/" #'comment-line)
+(keymap-global-set "C-_" #'comment-line)
 (keymap-global-set "M-p" #'scroll-down-line)
 (keymap-global-set "M-n" #'scroll-up-line)
 (keymap-global-set "M-S-<up>" #'(lambda ()
@@ -662,7 +673,7 @@ Version 2016-08-11"
   (let ((-buf (generate-new-buffer "untitled")))
     (switch-to-buffer -buf)
     (funcall initial-major-mode)
-    (setq buffer-offer-save t)
+    (setopt buffer-offer-save t)
     (set (make-local-variable 'custom-scratch-buffer) t))) ;; I added this line
 
 (defun custom-scratch-buffer-kill-query-function ()
@@ -740,7 +751,7 @@ Version 2016-08-11"
         (goto-char (car bounds)))
       )))
 
-(setq-default adaptive-fill-regexp "[ 	]*\\([!|•‣⁃◦]+[ 	]*\\)*\\([*-][ 	]\\[[x ]\\)*")
+(setopt adaptive-fill-regexp "[ 	]*\\([!|•‣⁃◦]+[ 	]*\\)*\\([*-][ 	]\\[[x ]\\)*")
 (global-wakatime-mode)
 
 (custom-set-variables
@@ -766,6 +777,7 @@ Version 2016-08-11"
  '(diff-hl-flydiff-delay 0.1)
  '(dired-auto-revert-buffer t t)
  '(dired-dwim-target t t)
+ '(dired-movement-style 'bounded)
  '(display-line-numbers-width-start nil)
  '(duplicate-line-final-position 1)
  '(ediff-split-window-function 'split-window-horizontally)
@@ -792,9 +804,6 @@ Version 2016-08-11"
  '(package-archive-priorities '(("gnu" . 99) ("nongnu" . 80) ("melpa" . 70)))
  '(package-quickstart t)
  '(package-selected-packages nil)
- '(package-vc-selected-packages
-   '((dirvish :url "git@github.com:alexluigit/dirvish.git" :branch "main")
-     (emt :url "git@github.com:roife/emt.git")))
  '(pixel-scroll-precision-interpolate-page t)
  '(pixel-scroll-precision-use-momentum t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
