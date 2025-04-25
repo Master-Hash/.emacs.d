@@ -144,6 +144,7 @@
   :ensure t)
 
 (use-package magit
+  :defer
   :ensure t)
 
 (use-package ligature
