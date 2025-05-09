@@ -15,9 +15,13 @@
     ;; (global-hl-line-mode)
     ;; (set-frame-width (selected-frame) 140)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
-    ;; https://emacs-china.org/t/emacs/15676
+    ;; `https://emacs-china.org/t/emacs/15676'
+    ;; `https://casouri.github.io/note/2019/emacs-%E5%AD%97%E4%BD%93%E4%B8%8E%E5%AD%97%E4%BD%93%E9%9B%86/index.html'
     ;; (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "霞鹜文楷" :height 110))
-    (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "Microsoft Yahei UI" :height 110))
+    ;; (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "Microsoft Yahei UI" :height 110))
+    (set-fontset-font t 'han (font-spec :family "Microsoft Yahei UI" :height 110))
+    ;; (set-fontset-font t 'han (font-spec :family "Noto Sans SC" :height 110))
+    ;; `https://github.com/ryanoasis/nerd-fonts/wiki/Glyph-Sets-and-Code-Points'
     (set-fontset-font t '(#xe5fa . #xe6b7) (font-spec :family "Symbols Nerd Font Mono" :height 110))
     (set-fontset-font t '(#xe700 . #xe8ef) (font-spec :family "Symbols Nerd Font Mono" :height 110))
     (set-fontset-font t '(#xea60 . #xec1e) (font-spec :family "Symbols Nerd Font Mono" :height 110))
@@ -31,7 +35,7 @@
   (global-window-tool-bar-mode)
   (tool-bar-mode))
 
-(require 'kinsoku)
+(setopt vc-handled-backends nil)
 (global-word-wrap-whitespace-mode t)
 (global-visual-line-mode t)
 (global-visual-wrap-prefix-mode)
@@ -118,7 +122,6 @@
       (when window-system (set-frame-parameter nil 'alpha 0.96))
       (setq default-directory (concat (getenv "APPDATA") "\\..\\..\\"))
       (setopt wakatime-cli-path "C:\\msys64\\clang64\\bin\\wakatime.exe")
-      (setopt magit-git-executable "C:/msys64/clang64/bin/git.exe")
       ;; (setq ispell-alternate-dictionary "~/../../Documents/The_Chambers_Thesaurus.txt")
       (set-clipboard-coding-system 'utf-16-le)
       (set-selection-coding-system 'utf-16-le))
@@ -135,6 +138,7 @@
   ;; Emacs 30 and newer: Disable Ispell completion function.
   ;; Try `cape-dict' as an alternative.
   (text-mode-ispell-word-completion nil)
+  (word-wrap-by-category t)
   ;; (mouse-wheel-tilt-scroll t)
 
   (mouse-wheel-progressive-speed nil) ;; fix pixel-scroll-precision
@@ -143,33 +147,68 @@
 (use-package wakatime-mode
   :ensure t)
 
-(use-package magit
-  :defer
-  :ensure t)
-
 (use-package ligature
   :ensure t
   :config
   ;; `https://github.com/mickeynp/ligature.el'
-  ;; Enable the "www" ligature in every possible major mode
-  ;; (ligature-set-ligatures 't '("www"))
-  ;; Enable traditional ligature support in eww-mode, if the
-  ;; `variable-pitch' face supports it
-  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-  ;; Enable all Cascadia Code ligatures in programming modes
-  (ligature-set-ligatures 't '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                               ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                               "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                               "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                               "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                               "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                               "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                               "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                               ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                               "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                               "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                               "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                               "\\\\" "://"))
+  (ligature-set-ligatures 't
+                          '(;; == === ==== => =| =>>=>=|=>==>> ==< =/=//=// =~
+                            ;; =:= =!=
+                            ("=" (rx (+ (or ">" "<" "|" "/" "~" ":" "!" "="))))
+                            ;; ;; ;;;
+                            (";" (rx (+ ";")))
+                            ;; && &&&
+                            ("&" (rx (+ "&")))
+                            ;; !! !!! !. !: !!. != !== !~
+                            ("!" (rx (+ (or "=" "!" "\." ":" "~"))))
+                            ;; ?? ??? ?:  ?=  ?.
+                            ("?" (rx (or ":" "=" "\." (+ "?"))))
+                            ;; %% %%%
+                            ("%" (rx (+ "%")))
+                            ;; |> ||> |||> ||||> |] |} || ||| |-> ||-||
+                            ;; |->>-||-<<-| |- |== ||=||
+                            ;; |==>>==<<==<=>==//==/=!==:===>
+                            ("|" (rx (+ (or ">" "<" "|" "/" ":" "!" "}" "\]"
+                                            "-" "=" ))))
+                            ;; \\ \\\ \/
+                            ("\\" (rx (or "/" (+ "\\"))))
+                            ;; ++ +++ ++++ +>
+                            ("+" (rx (or ">" (+ "+"))))
+                            ;; :: ::: :::: :> :< := :// ::=
+                            (":" (rx (or ">" "<" "=" "//" ":=" (+ ":"))))
+                            ;; // /// //// /\ /* /> /===:===!=//===>>==>==/
+                            ("/" (rx (+ (or ">"  "<" "|" "/" "\\" "\*" ":" "!"
+                                            "="))))
+                            ;; .. ... .... .= .- .? ..= ..<
+                            ("\." (rx (or "=" "-" "\?" "\.=" "\.<" (+ "\."))))
+                            ;; -- --- ---- -~ -> ->> -| -|->-->>->--<<-|
+                            ("-" (rx (+ (or ">" "<" "|" "~" "-"))))
+                            ;; *> */ *)  ** *** ****
+                            ("*" (rx (or ">" "/" ")" (+ "*"))))
+                            ;; www wwww
+                            ;; ("w" (rx (+ "w")))
+                            ;; <> <!-- <|> <: <~ <~> <~~ <+ <* <$ </  <+> <*>
+                            ;; <$> </> <|  <||  <||| <|||| <- <-| <-<<-|-> <->>
+                            ;; <<-> <= <=> <<==<<==>=|=>==/==//=!==:=>
+                            ;; << <<< <<<<
+                            ("<" (rx (+ (or "\+" "\*" "\$" "<" ">" ":" "~"  "!"
+                                            "-"  "/" "|" "="))))
+                            ;; >: >- >>- >--|-> >>-|-> >= >== >>== >=|=:=>>
+                            ;; >> >>> >>>>
+                            (">" (rx (+ (or ">" "<" "|" "/" ":" "=" "-"))))
+                            ;; #: #= #! #( #? #[ #{ #_ #_( ## ### #####
+                            ("#" (rx (or ":" "=" "!" "(" "\?" "\[" "{" "_(" "_"
+                                         (+ "#"))))
+                            ;; ~~ ~~~ ~=  ~-  ~@ ~> ~~>
+                            ("~" (rx (or ">" "=" "-" "@" "~>" (+ "~"))))
+                            ;; __ ___ ____ _|_ __|____|_
+                            ("_" (rx (+ (or "_" "|"))))
+                            ;; Fira code: 0xFF 0x12
+                            ;; ("0" (rx (and "x" (+ (in "A-F" "a-f" "0-9")))))
+                            ;; Fira code:
+                            ;; "Fl"  "Tl"  "fi"  "fj"  "fl"  "ft"
+                            ;; The few not covered by the regexps.
+                            "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^="))
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t)
@@ -380,7 +419,14 @@ the relevant file-directory clicked on by the mouse."
   :ensure t
   :bind (("C-c u" . vundo)))
 
+(use-package vc-git
+  :defer 0.1 ;; the exact time is irrelevant, loading happens when open any file
+  :config
+  (setopt vc-handled-backends '(Git)))
+
 (use-package diff-hl
+  ;; :defer t
+  :after vc-git
   :ensure
   ;; :defer 0.5
   ;; :hook (vc-mode-line . (lambda ()
@@ -389,9 +435,10 @@ the relevant file-directory clicked on by the mouse."
   :custom
   (diff-hl-flydiff-delay 0.1)
   :config
+  ;; (setopt vc-handled-backends '(Git))
+  (global-diff-hl-mode)
   (diff-hl-flydiff-mode)
   (global-diff-hl-show-hunk-mouse-mode)
-  (global-diff-hl-mode)
 )
 ;; (use-package benchmark-init
 ;;   :ensure t
@@ -452,14 +499,16 @@ the relevant file-directory clicked on by the mouse."
 ;;   :ensure
 ;;   :mode "\\.lalrpop\\'")
 
-(setq magit-format-file-function #'magit-format-file-nerd-icons)
-
-;; (use-package magit
-;;   :ensure t
-;;   :after nerd-icons
-;;   :custom
-;;   ((magit-format-file-function #'magit-format-file-nerd-icons)
-;;    (magit-git-executable "C:/msys64/clang64/bin/git.exe")))
+(use-package magit
+  :ensure t
+  :defer t
+  :after nerd-icons
+  :hook ((magit-post-refresh . diff-hl-magit-post-refresh))
+  :config
+  (when (eq system-type 'windows-nt)
+    (setopt magit-git-executable "C:/msys64/clang64/bin/git.exe"))
+  :custom
+  ((magit-format-file-function #'magit-format-file-nerd-icons)))
 
 (use-package eglot
   :defer t

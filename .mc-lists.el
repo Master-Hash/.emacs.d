@@ -17,6 +17,7 @@
         forward-sexp
         global-visual-line-mode
         hash--beginning-of-line
+        hash--end-of-line
         yank-rectangle
         ))
 
