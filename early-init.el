@@ -24,21 +24,23 @@
               (garbage-collect)))
           t)
 
-(setq package-enable-at-startup nil
-      file-name-handler-alist nil
+(setopt package-enable-at-startup nil)
+(setq file-name-handler-alist nil
       message-log-max 16384
       gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6
       auto-window-vscroll nil)
 
 (push '(vertical-scroll-bars . nil) default-frame-alist)
+(push '(left . 300) default-frame-alist)
+(push '(top . 100) default-frame-alist)
 
-(setq package-archives '(("gnu"    . "https://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+(setopt package-archives '(("gnu"    . "https://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
                          ("nongnu" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
                          ("melpa"  . "https://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
 
-(customize-set-variable 'package-archive-priorities
-                        '(("gnu"    . 99)
-                          ("nongnu" . 80)
-                          ("melpa"  . 70)
-))
+(setopt package-archive-priorities
+        '(("gnu"    . 99)
+          ("nongnu" . 80)
+          ("melpa"  . 70)
+          ))

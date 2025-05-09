@@ -14,7 +14,7 @@
     ;; (global-tab-line-mode)
     ;; (global-hl-line-mode)
     ;; (set-frame-width (selected-frame) 140)
-    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
     ;; `https://emacs-china.org/t/emacs/15676'
     ;; `https://casouri.github.io/note/2019/emacs-%E5%AD%97%E4%BD%93%E4%B8%8E%E5%AD%97%E4%BD%93%E9%9B%86/index.html'
     ;; (set-fontset-font t '(#x2ff0 . #x9ffc) (font-spec :family "霞鹜文楷" :height 110))
