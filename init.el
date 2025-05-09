@@ -35,7 +35,11 @@
   (global-window-tool-bar-mode)
   (tool-bar-mode))
 
-(setopt vc-handled-backends nil)
+;; (setopt vc-handled-backends nil)
+(if (null (cdr command-line-args))
+    (setopt vc-handled-backends nil)
+  (setopt vc-handled-backends '(Git)))
+
 (global-word-wrap-whitespace-mode t)
 (global-visual-line-mode t)
 (global-visual-wrap-prefix-mode)
@@ -425,21 +429,16 @@ the relevant file-directory clicked on by the mouse."
   (setopt vc-handled-backends '(Git)))
 
 (use-package diff-hl
-  ;; :defer t
   :after vc-git
   :ensure
-  ;; :defer 0.5
-  ;; :hook (vc-mode-line . (lambda ()
-
-  ;;                         ))
   :custom
   (diff-hl-flydiff-delay 0.1)
   :config
-  ;; (setopt vc-handled-backends '(Git))
-  (global-diff-hl-mode)
-  (diff-hl-flydiff-mode)
-  (global-diff-hl-show-hunk-mouse-mode)
-)
+  (global-diff-hl-mode t)
+  (diff-hl-flydiff-mode t)
+  (global-diff-hl-show-hunk-mouse-mode t)
+  (unless (window-system) (diff-hl-margin-mode t)))
+
 ;; (use-package benchmark-init
 ;;   :ensure t
 ;;   ;; :disabled
@@ -827,7 +826,6 @@ Version 2016-08-11"
  '(cursor-type 'bar)
  '(delete-selection-mode t)
  '(dictionary-server "dict.org")
- '(diff-hl-flydiff-delay 0.1)
  '(dired-auto-revert-buffer t t)
  '(dired-dwim-target t t)
  '(dired-movement-style 'bounded)
