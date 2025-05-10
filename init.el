@@ -148,41 +148,42 @@
   (mouse-wheel-progressive-speed nil) ;; fix pixel-scroll-precision
   )
 
-(use-package xclip
-  :ensure t
-  :config
-  ;; 这玩意实际上会被无视
-  ;; 但是得留着让启动模式不报错
-  ;; 实际上复制用 clip.exe
-  ;; 粘贴用 powershell.exe -Command Get-Clipboard
-  (setopt xclip-program "clip.exe")
+(when (and (getenv "WSL_INTEROP")
+           (not window-system))
+  (use-package xclip
+    :ensure t
+    :config
+    ;; 这玩意实际上会被无视
+    ;; 但是得留着让启动模式不报错
+    ;; 实际上复制用 clip.exe
+    ;; 粘贴用 powershell.exe -Command Get-Clipboard
+    (setopt xclip-program "clip.exe")
 
-  ;; 我认为很不严谨，应该加上 -NoProfile -NonInteractive 等等
-  ;; 而且应该用 pwsh！
-  ;; 划掉，pwsh 的冷启动慢死仙人
-  (advice-add 'xclip-get-selection :around
-              (lambda (orig-fun type)
-                (if (and (eq xclip-method 'powershell)
-                         (memq type '(clipboard CLIPBOARD)))
-                    ;; 使用我们自己的 PowerShell 命令调用，替换硬编码的 powershell.exe
-                    (with-output-to-string
-                      (let ((coding-system-for-read 'dos)) ;转换 CR->LF
-                        (call-process "powershell.exe" nil `(,standard-output nil) nil
-                                      "-NoProfile" "-NonInteractive" "-Command" "Get-Clipboard")))
-                  ;; 否则使用原始函数
-                  (funcall orig-fun type))))
+    ;; 我认为很不严谨，应该加上 -NoProfile -NonInteractive 等等
+    ;; 而且应该用 pwsh！
+    ;; 划掉，pwsh 的冷启动慢死仙人
+    (advice-add 'xclip-get-selection :around
+                (lambda (orig-fun type)
+                  (if (and (eq xclip-method 'powershell)
+                           (memq type '(clipboard CLIPBOARD)))
+                      ;; 使用我们自己的 PowerShell 命令调用，替换硬编码的 powershell.exe
+                      (with-output-to-string
+                        (let ((coding-system-for-read 'dos)) ;转换 CR->LF
+                          (call-process "powershell.exe" nil `(,standard-output nil) nil
+                                        "-NoProfile" "-NonInteractive" "-Command" "Get-Clipboard")))
+                    ;; 否则使用原始函数
+                    (funcall orig-fun type))))
 
-  ;; 删除末尾换行符
-  (advice-add 'xclip-get-selection :filter-return
-              (lambda (text)
-                (if (and (eq xclip-method 'powershell)
-                         (stringp text)
-                         (string-match-p "\n\\'" text))
-                    (substring text 0 -1)  ;; 去掉末尾的换行符
-                  text)))
+    ;; 删除末尾换行符
+    (advice-add 'xclip-get-selection :filter-return
+                (lambda (text)
+                  (if (and (eq xclip-method 'powershell)
+                           (stringp text)
+                           (string-match-p "\n\\'" text))
+                      (substring text 0 -1)  ;; 去掉末尾的换行符
+                    text)))
 
-  (xclip-mode)
-  :when (and (getenv "WSL_INTEROP") (not window-system)))
+    (xclip-mode)))
 
 (use-package wakatime-mode
   :ensure t)
@@ -882,7 +883,7 @@ Version 2016-08-11"
  '(inhibit-startup-screen t)
  '(ispell-dictionary "en")
  '(kill-do-not-save-duplicates t)
- '(load-prefer-newer t t)
+ '(load-prefer-newer t)
  '(magit-ediff-dwim-show-on-hunks t)
  '(marginalia-annotators
    '(marginalia-annotators-heavy marginalia-annotators-light nil) t)
