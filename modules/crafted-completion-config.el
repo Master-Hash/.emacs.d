@@ -76,13 +76,17 @@
 
 ;;     )
 
+(use-package avy
+  :ensure
+  :bind (("C-s" . avy-goto-char-timer)))
+
 (use-package consult
   :ensure
   ;; :defer
   ;; :commands (isearch-forward)
   ;; :custom (consult-line-start-from-top t)
   :bind (
-         ("C-s" . consult-line)
+         ("C-r" . consult-line)
          ("M-g g" . consult-goto-line)
          ("C-x b" . consult-buffer)
          ("C-x p b" . consult-project-buffer)
