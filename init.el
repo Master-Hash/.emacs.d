@@ -393,7 +393,9 @@
   :commands (dired dirvish)
   :bind (("C-c d" . dirvish-side))
   :init
-  (push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path)
+  (pcase system-type
+    ('windows-nt (push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path))
+    ('gnu/linux (push "/home/hash/.emacs.d/elpa/dirvish/extensions" load-path)))
   (dirvish-override-dired-mode)
   :config
   (require 'dirvish-side)
@@ -910,6 +912,8 @@ Version 2016-08-11"
  '(package-archive-priorities '(("gnu" . 99) ("nongnu" . 80) ("melpa" . 70)))
  '(package-quickstart t)
  '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((dirvish :url "git@github.com:alexluigit/dirvish.git" :branch "main")))
  '(pixel-scroll-precision-interpolate-page t)
  '(pixel-scroll-precision-use-momentum t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
