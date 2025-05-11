@@ -14,6 +14,7 @@
       luna-dumped t)
 ;; (package-initialize) ;; doens’t require each package, we need to load
 ;; those we want manually
+(push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path)
 (dolist (package '(
                    ;; Built-ins
                    autoinsert
@@ -74,6 +75,16 @@
                    tree-widget
                    wakatime-mode
                    diff-hl
+                   dirvish
+                   dirvish-side
+                   dirvish-subtree
+                   dirvish-vc
+                   dirvish-rsync
+                   dirvish-narrow
+                   dirvish-quick-access
+                   dirvish-history
+                   dirvish-ls
+                   dirvish-emerge
                    ;; s
                    ;; f
                    ;; shrink-path

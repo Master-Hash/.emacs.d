@@ -267,11 +267,11 @@
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   :when window-system)
 
-(use-package nerd-icons-dired
-  :ensure
-  :defer t
-  :hook (dired-mode . nerd-icons-dired-mode)
-  :when window-system)
+;; (use-package nerd-icons-dired
+;;   :ensure
+;;   :defer t
+;;   :hook (dired-mode . nerd-icons-dired-mode)
+;;   :when window-system)
 
 (use-package nerd-icons-ibuffer
   :ensure
@@ -381,71 +381,89 @@
          ;; ("C-c i" . imenu-list-smart-toggle)
          ))
 
-;; (use-package dirvish
-;;   :vc (:url "git@github.com:alexluigit/dirvish.git"
-;;             :branch "main"
-;;             :rev :newest)
-;;   :ensure
-;;   :commands (dired)
-;;   :bind (("C-c d" . dirvish-side))
-;;   :config
-;;   (dirvish-override-dired-mode))
 
-(defun hash--dired-sidebar-mouse-subtree-toggle-or-find-file (event)
-  "Handle a mouse click EVENT in `dired-sidebar'.
 
-For directories, if `dired-sidebar-cycle-subtree-on-click' is true,
-cycle the directory.
-
-Otherwise, behaves the same as if user clicked on a file.
-
-For files, use `dired-sidebar-find-file'.
-
-This uses the same code as `dired-mouse-find-file-other-window' to find
-the relevant file-directory clicked on by the mouse."
-  (interactive "e")
-  (let (window pos file)
-    (save-excursion
-      (setq window (posn-window (event-end event))
-            pos (posn-point (event-end event)))
-      (if (not (windowp window))
-          (error "No file chosen"))
-      (set-buffer (window-buffer window))
-      (goto-char pos)
-      (setq file (dired-get-file-for-visit)))
-    (with-selected-window window
-      (if (and dired-sidebar-cycle-subtree-on-click
-               (file-directory-p file)
-               (not (string-suffix-p "." file)))
-          (dired-sidebar-subtree-toggle)
-        (dired-sidebar-find-file file)))))
-
-(use-package dired-sidebar
+(use-package dirvish
+  ;; `https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org'
+  :vc (:url "git@github.com:alexluigit/dirvish.git"
+            :branch "main"
+            :rev :newest)
   :ensure
-  :commands (dired-sidebar-toggle-sidebar)
-  :bind (("C-c d" . dired-sidebar-toggle-sidebar)
-         (:map dired-sidebar-mode-map
-               ("C-M-d" . dired-subtree-down)
-               ("C-M-n" . dired-subtree-next-sibling)
-               ("C-M-p" . dired-subtree-previous-sibling)
-               ("C-M-u" . dired-subtree-up)
-               ;; ("<mouse-1>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
-               ;; ("<down-mouse-1>" . nil)
-               ;; ("<mouse-2>" . nil)
-               ("<mouse-2>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
-               ))
-  :custom ((dired-sidebar-use-custom-font t))
-  ;; :custom-face (dired-sidebar-face ((t (:height 70))))
-  :hook ((dired-sidebar-mode . (lambda ()
-                                 (display-line-numbers-mode -1)
-                                 (visual-wrap-prefix-mode -1)
-                                 (visual-line-mode -1)
-                                 (whitespace-mode -1)))
-         (dired-sidebar-mode . (lambda ()
-                                 (setq-local mouse-wheel-tilt-scroll t))))
+  :after vc-git
+  :commands (dired dirvish)
+  :bind (("C-c d" . dirvish-side))
+  :init
+  (push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path)
+  (dirvish-override-dired-mode)
   :config
-  (setq dired-sidebar-face `(:family "Noto Sans CJK SC" :height 100))
-  (setq dired-sidebar-width 25))
+  (require 'dirvish-side)
+  (require 'dirvish-vc)
+  (require 'dirvish-rsync)
+  (require 'dirvish-narrow)
+  (require 'dirvish-quick-access)
+  (require 'dirvish-history)
+  (require 'dirvish-ls)
+  (require 'dirvish-emerge)
+  (setopt dirvish-attributes           ; The order *MATTERS* for some attributes
+          '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+          dirvish-side-attributes
+          '(vc-state nerd-icons collapse file-size)))
+
+;; (defun hash--dired-sidebar-mouse-subtree-toggle-or-find-file (event)
+;;   "Handle a mouse click EVENT in `dired-sidebar'.
+
+;; For directories, if `dired-sidebar-cycle-subtree-on-click' is true,
+;; cycle the directory.
+
+;; Otherwise, behaves the same as if user clicked on a file.
+
+;; For files, use `dired-sidebar-find-file'.
+
+;; This uses the same code as `dired-mouse-find-file-other-window' to find
+;; the relevant file-directory clicked on by the mouse."
+;;   (interactive "e")
+;;   (let (window pos file)
+;;     (save-excursion
+;;       (setq window (posn-window (event-end event))
+;;             pos (posn-point (event-end event)))
+;;       (if (not (windowp window))
+;;           (error "No file chosen"))
+;;       (set-buffer (window-buffer window))
+;;       (goto-char pos)
+;;       (setq file (dired-get-file-for-visit)))
+;;     (with-selected-window window
+;;       (if (and dired-sidebar-cycle-subtree-on-click
+;;                (file-directory-p file)
+;;                (not (string-suffix-p "." file)))
+;;           (dired-sidebar-subtree-toggle)
+;;         (dired-sidebar-find-file file)))))
+
+;; (use-package dired-sidebar
+;;   :ensure
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :bind (("C-c d" . dired-sidebar-toggle-sidebar)
+;;          (:map dired-sidebar-mode-map
+;;                ("C-M-d" . dired-subtree-down)
+;;                ("C-M-n" . dired-subtree-next-sibling)
+;;                ("C-M-p" . dired-subtree-previous-sibling)
+;;                ("C-M-u" . dired-subtree-up)
+;;                ;; ("<mouse-1>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
+;;                ;; ("<down-mouse-1>" . nil)
+;;                ;; ("<mouse-2>" . nil)
+;;                ("<mouse-2>" . hash--dired-sidebar-mouse-subtree-toggle-or-find-file)
+;;                ))
+;;   :custom ((dired-sidebar-use-custom-font t))
+;;   ;; :custom-face (dired-sidebar-face ((t (:height 70))))
+;;   :hook ((dired-sidebar-mode . (lambda ()
+;;                                  (display-line-numbers-mode -1)
+;;                                  (visual-wrap-prefix-mode -1)
+;;                                  (visual-line-mode -1)
+;;                                  (whitespace-mode -1)))
+;;          (dired-sidebar-mode . (lambda ()
+;;                                  (setq-local mouse-wheel-tilt-scroll t))))
+;;   :config
+;;   (setq dired-sidebar-face `(:family "Noto Sans SC" :height 100))
+;;   (setq dired-sidebar-width 25))
 
 ;; (use-package ibuffer-sidebar
 ;;   :ensure
@@ -863,8 +881,8 @@ Version 2016-08-11"
  '(cursor-type 'bar)
  '(delete-selection-mode t)
  '(dictionary-server "dict.org")
- '(dired-auto-revert-buffer t t)
- '(dired-dwim-target t t)
+ '(dired-auto-revert-buffer t)
+ '(dired-dwim-target t)
  '(dired-movement-style 'bounded)
  '(display-line-numbers-width-start nil)
  '(duplicate-line-final-position 1)
