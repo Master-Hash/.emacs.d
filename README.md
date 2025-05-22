@@ -4,14 +4,14 @@
 
 ## 配置原则
 
-Visual Studio Code 是我的主力编辑器，足以应付大部分前端、写作和 Rust 工作，但我仍需一快速启动的终端编辑器，来临时修改 shell profile 等小文件，以及节约宝贵的内存。为此我折腾过无数次。Sublime、Zed 都不太合我意。Emacs 经过优化，启动速度能攀比 OneNote，初始化时间约0.6s（图形）0.13s（终端），功能齐全，足够好玩且满意。
+Visual Studio Code 是我的主力编辑器，足以应付大部分前端、写作和 Rust 工作，但我仍需一快速启动的终端编辑器，来临时修改 shell profile 等小文件，以及节约宝贵的内存。为此我折腾过无数次。Sublime、Zed 都不太合我意。Emacs 经过优化，启动速度能攀比 OneNote，初始化时间约0.7s（图形）0.13s（终端），功能齐全，足够好玩且满意。
 
 总体原则如下：
 
 * 支持现代功能（Eglot，Tree-sitter，内联补全，etc）；
-* 内置功能优先（Dired，iBuffer over treemacs，minibuffer over modeline）；
+* 内置功能优先（Dired，iBuffer over treemacs）；
 * 遵守 Unix 终端和现代图形界面的键位约定（[Unix](https://en.wikipedia.org/wiki/Control_key)，[Cut, copy, and paste](https://en.wikipedia.org/wiki/Cut,_copy,_and_paste)），尊重 VSCode 里养成的肌肉记忆和审美；
-* 兼容 Windows 和 Linux，同时支持从 Windows Shell 和 MSYS2 bash 打开；
+* 兼容 Windows 和 Linux，同时支持从 Windows Shell 和 WSL 打开；（MSYS2 SHELL 兼容性不考虑）
 * 冷启动要快。
 
 （顺便吐槽，XCV 是苹果发明的，和 [CUA](https://en.wikipedia.org/wiki/IBM_Common_User_Access) 完全不沾边，不知道为什么 Emacs 要给苹果模式起个 IBM 名字）
@@ -34,6 +34,10 @@ mklink /J C:\msys64\home\hash\.emacs.d C:\Users\hash\AppData\Roaming\.emacs.d
 * dump 主题对启动速度的影响最明显。
 * 注意测试同时兼容 dump 和普通加载的 Emacs。
 * 在 `early-init.el` 里修改 GC 参数，禁止启动期间搜集垃圾，对启动时间效果同样拔群。
+
+## GnuPG
+
+MSYS2 自带 GnuPG 不能识别 Windows 路径，建议采用 Git for Windows 或 Gpg4win 的。个人偏爱后者。
 
 ## 速查
 

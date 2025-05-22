@@ -18,6 +18,7 @@
         global-visual-line-mode
         hash--beginning-of-line
         hash--end-of-line
+        kill-visual-line
         yank-rectangle
         ))
 

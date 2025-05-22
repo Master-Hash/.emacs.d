@@ -383,33 +383,32 @@
 
 
 
-(use-package dirvish
-  ;; `https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org'
-  :vc (:url "git@github.com:alexluigit/dirvish.git"
-            :branch "main"
-            :rev :newest)
-  :ensure
-  :after vc-git
-  :commands (dired dirvish)
-  :bind (("C-c d" . dirvish-side))
-  :init
-  (pcase system-type
-    ('windows-nt (push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path))
-    ('gnu/linux (push "/home/hash/.emacs.d/elpa/dirvish/extensions" load-path)))
-  (dirvish-override-dired-mode)
-  :config
-  (require 'dirvish-side)
-  (require 'dirvish-vc)
-  (require 'dirvish-rsync)
-  (require 'dirvish-narrow)
-  (require 'dirvish-quick-access)
-  (require 'dirvish-history)
-  (require 'dirvish-ls)
-  (require 'dirvish-emerge)
-  (setopt dirvish-attributes           ; The order *MATTERS* for some attributes
-          '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-          dirvish-side-attributes
-          '(vc-state nerd-icons collapse file-size)))
+;; (use-package dirvish
+;;   ;; `https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org'
+;;   :vc (:url "git@github.com:alexluigit/dirvish.git"
+;;             :branch "main"
+;;             :rev :newest)
+;;   :ensure
+;;   :after vc-git
+;;   :commands (dired dirvish)
+;;   :bind (("C-c d" . dirvish-side))
+;;   :load-path "elpa/dirvish/extensions"
+;;   :init
+;;   (dirvish-override-dired-mode)
+;;   :config
+;;   (require 'dirvish-side)
+;;   (require 'dirvish-vc)
+;;   (require 'dirvish-rsync)
+;;   (require 'dirvish-narrow)
+;;   (require 'dirvish-quick-access)
+;;   (require 'dirvish-history)
+;;   (require 'dirvish-ls)
+;;   (require 'dirvish-emerge)
+;;   ;; (setopt dirvish-attributes           ; The order *MATTERS* for some attributes
+;;   ;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+;;   ;;         dirvish-side-attributes
+;;   ;;         '(vc-state nerd-icons collapse file-size))
+;;   )
 
 ;; (defun hash--dired-sidebar-mouse-subtree-toggle-or-find-file (event)
 ;;   "Handle a mouse click EVENT in `dired-sidebar'.
@@ -581,6 +580,10 @@
   ;;                           (unless (eq major-mode 'lalrpop-mode)
   ;;                             (eglot-ensure))))
   ;; :bind ("M-F" . eglot-format)
+  :hook (before-save . (lambda ()
+                         (when (eglot-managed-p)
+                           (eglot-format-buffer))
+                         ))
   :bind (:map eglot-mode-map
               ("M-F" . eglot-format))
   :config
@@ -593,7 +596,7 @@
   (if (eq system-type 'windows-nt)
     (progn
       (add-to-list 'eglot-server-programs
-                   `(typescript-ts-base-mode
+                   `(typescript-ts-mode
                     .
                     ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio"
                                             :initializationOptions
@@ -661,27 +664,38 @@
                                       ;; (:target "x86_64-pc-windows-gnu")
                                       :checkOnSave t
                                       :check (:command "clippy")
-                                      :inlayHints
-                                      (:typeHints
-                                       (:enable t))
-                                      )))))
-      (add-to-list 'eglot-server-programs
-                   '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
-                                     "pyright-langserver" "--stdio"
-                                     ;;:initializationOptions
-                                     ;;  (:python (:analysis (:typeCheckingMode "strict")))
-                                     ))) ;; basedpyright or delance
-      (add-to-list 'eglot-server-programs
-               '(c-ts-mode . ("clangd"
-                              "--compile-commands-dir=build"
-                              "--clang-tidy"
-                              "--completion-style=detailed"
-                              "--all-scopes-completion"
-                              "--background-index"
-                              "--header-insertion=iwyu"
-                              "--function-arg-placeholders")))
-      (add-to-list 'eglot-server-programs
-               '(c++-ts-mode . ("clangd"
+                                      :inlayHints (:typeHints (:enable t)))))))
+    ;; nt ends
+    (add-to-list 'eglot-server-programs
+                 `(typescript-ts-mode
+                   .
+                   ,(eglot-alternatives '(("tsgo" "lsp" "-stdio") ;; preview
+                                          ("typescript-language-server.cmd" "--stdio"
+                                           :initializationOptions
+                                           (:preferences
+                                            (:quotePreference "double"
+                                                              :importModuleSpecifier "relative"
+                                                              :importModuleSpecifierEnding "js"
+                                                              :preferTypeOnlyAutoImports t
+                                                              :includeInlayParameterNameHints "all")
+                                            :locale "zh-CN")
+                                           )
+                                          ("vtsls.cmd" "--stdio")
+                                          ("deno" "lsp")))))
+    (add-to-list 'eglot-server-programs
+                 `(js-ts-mode
+                   .
+                   ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio")
+                                          ("vtsls.cmd" "--stdio")
+                                          ("deno" "lsp")))))
+    (add-to-list 'eglot-server-programs
+                 '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
+                                       "pyright-langserver" "--stdio"
+                                       ;;:initializationOptions
+                                       ;;  (:python (:analysis (:typeCheckingMode "strict")))
+                                       ))) ;; basedpyright or delance
+    (add-to-list 'eglot-server-programs
+                 '(c-ts-mode . ("clangd"
                                 "--compile-commands-dir=build"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
@@ -689,32 +703,23 @@
                                 "--background-index"
                                 "--header-insertion=iwyu"
                                 "--function-arg-placeholders")))
-        (add-to-list 'eglot-server-programs
-               '(rust-ts-mode . ("rust-analyzer" :initializationOptions
-                                 (:cargo
-                                  (:extraEnv
-                                   (:CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER "C:\\msys64\\ucrt64\\bin\\gcc.exe"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS "-C link-arg=-fuse-ld=lld -C target-cpu=x86-64-v3"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_LLVMGNU_LINKER "C:\\msys64\\clang64\\bin\\clang.exe"
-                                    :CARGO_TARGET_X86_64_PC_WINDOWS_LLVMGNU_RUSTFLAGS "-Clink-arg=-fuse-ld=lld -C target-cpu=x86-64-v3"
-                                    :CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER "C:\\msys64\\clang64\\bin\\ld.lld.exe"
-                                    :CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUSTFLAGS "-C target-feature=+simd128")
-                                   :target "x86_64-unknown-linux-gnu")
-                                  :checkOnSave t
-                                  :check (:command "clippy")
-                                  :server
-                                  (:extraEnv
-                                   (:AR_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\llvm-ar.exe"
-                                    :CC_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\clang.exe"
-                                    :CFLAGS_x86_64-pc-windows-gnullvm "-march=x86-64-v3 -fvisibility=hidden -flto=thin"
-                                    :CXX_x86_64-pc-windows-gnullvm "C:\\msys64\\clang64\\bin\\clang++.exe"
-                                    :CXXFLAGS_x86_64-pc-windows-gnullvm "-march=x86-64-v3 -fvisibility=hidden -flto=thin")
-                                   )
-                                  :inlayHints
-                                  (:typeHints
-                                   (:enable t))
-                                  )))
-    ))
+    (add-to-list 'eglot-server-programs
+                 '(c++-ts-mode . ("clangd"
+                                  "--compile-commands-dir=build"
+                                  "--clang-tidy"
+                                  "--completion-style=detailed"
+                                  "--all-scopes-completion"
+                                  "--background-index"
+                                  "--header-insertion=iwyu"
+                                  "--function-arg-placeholders")))
+    (add-to-list 'eglot-server-programs
+                 '(rust-ts-mode . ("rust-analyzer" :initializationOptions
+                                   (:cargo
+                                    :target "x86_64-unknown-linux-gnu"
+                                    :checkOnSave t
+                                    :check (:command "clippy")
+                                    :inlayHints (:typeHints (:enable t)))))
+                 ))
 )
 
 (require 'crafted-defaults-config)
