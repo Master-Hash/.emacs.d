@@ -267,11 +267,11 @@
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   :when window-system)
 
-;; (use-package nerd-icons-dired
-;;   :ensure
-;;   :defer t
-;;   :hook (dired-mode . nerd-icons-dired-mode)
-;;   :when window-system)
+(use-package nerd-icons-dired
+  :ensure
+  :defer t
+  :hook (dired-mode . nerd-icons-dired-mode)
+  :when window-system)
 
 (use-package nerd-icons-ibuffer
   :ensure
@@ -787,7 +787,7 @@ Version 2016-08-11"
   (let ((-buf (generate-new-buffer "untitled")))
     (switch-to-buffer -buf)
     (funcall initial-major-mode)
-    (setopt buffer-offer-save t)
+    (setq-local buffer-offer-save t)
     (set (make-local-variable 'custom-scratch-buffer) t))) ;; I added this line
 
 (defun custom-scratch-buffer-kill-query-function ()

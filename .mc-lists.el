@@ -12,6 +12,7 @@
         cua-exchange-point-and-mark
         cua-paste
         eglot
+        emt-backward-word
         emt-forward-word
         end-of-visual-line
         forward-sexp
