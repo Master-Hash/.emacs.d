@@ -910,8 +910,6 @@ Version 2016-08-11"
  '(kill-do-not-save-duplicates t)
  '(load-prefer-newer t)
  '(magit-ediff-dwim-show-on-hunks t)
- '(marginalia-annotators
-   '(marginalia-annotators-heavy marginalia-annotators-light nil) t)
  '(mouse-prefer-closest-glyph t)
  '(org-hide-emphasis-markers nil)
  '(package-archive-priorities '(("gnu" . 99) ("nongnu" . 80) ("melpa" . 70)))
