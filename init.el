@@ -125,7 +125,13 @@
     (progn
       (when window-system (set-frame-parameter nil 'alpha 0.96))
       (setq default-directory (concat (getenv "APPDATA") "\\..\\..\\"))
-      (setopt wakatime-cli-path "C:\\msys64\\clang64\\bin\\wakatime.exe")
+      (setopt wakatime-cli-path
+              (concat "C:\\msys64\\"
+                      (pcase system-configuration
+                        ((pred (string= "x86_64-w64-mingw32")) "clang64")
+                        ((pred (string= "aarch64-w64-mingw32")) "clangarm64")
+                        (_ (error)))
+                      "\\bin\\wakatime.exe"))
       ;; (setq ispell-alternate-dictionary "~/../../Documents/The_Chambers_Thesaurus.txt")
       (set-clipboard-coding-system 'utf-16-le)
       (set-selection-coding-system 'utf-16-le))
@@ -561,7 +567,13 @@
   :hook ((magit-post-refresh . diff-hl-magit-post-refresh))
   :config
   (when (eq system-type 'windows-nt)
-    (setopt magit-git-executable "C:/msys64/clang64/bin/git.exe"))
+    (setopt magit-git-executable
+            (concat "C:\\msys64\\"
+                    (pcase system-configuration
+                      ((pred (string= "x86_64-w64-mingw32")) "clang64")
+                      ((pred (string= "aarch64-w64-mingw32")) "clangarm64")
+                      (_ (error)))
+                    "\\bin\\git.exe")))
   :custom
   ((magit-format-file-function #'magit-format-file-nerd-icons)))
 
