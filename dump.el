@@ -75,16 +75,16 @@
                    tree-widget
                    wakatime-mode
                    diff-hl
-                   dirvish
-                   dirvish-side
-                   dirvish-subtree
-                   dirvish-vc
-                   dirvish-rsync
-                   dirvish-narrow
-                   dirvish-quick-access
-                   dirvish-history
-                   dirvish-ls
-                   dirvish-emerge
+                   ;; dirvish
+                   ;; dirvish-side
+                   ;; dirvish-subtree
+                   ;; dirvish-vc
+                   ;; dirvish-rsync
+                   ;; dirvish-narrow
+                   ;; dirvish-quick-access
+                   ;; dirvish-history
+                   ;; dirvish-ls
+                   ;; dirvish-emerge
                    ;; s
                    ;; f
                    ;; shrink-path
