@@ -580,22 +580,23 @@
 (use-package eglot
   :defer t
   :hook ((c-ts-mode c++-ts-mode
-          python-ts-mode js-ts-mode rust-ts-mode
-          typescript-ts-mode tsx-ts-mode
-          bash-ts-mode go-ts-mode
-          go-mod-ts-mode markdown-ts-mode
-          yaml-ts-mode
-          ;; powershell-ts-mode
-          ) . eglot-ensure)
+                    python-ts-mode js-ts-mode rust-ts-mode
+                    typescript-ts-mode tsx-ts-mode
+                    bash-ts-mode go-ts-mode
+                    go-mod-ts-mode markdown-ts-mode
+                    yaml-ts-mode
+                    ;; powershell-ts-mode
+                    ) . eglot-ensure)
   ;; :hook ((rust-ts-mode) . (lambda ()
   ;;                           (message "%s" major-mode)
   ;;                           (unless (eq major-mode 'lalrpop-mode)
   ;;                             (eglot-ensure))))
   ;; :bind ("M-F" . eglot-format)
   :hook (before-save . (lambda ()
-                         (when (eglot-managed-p)
-                           (eglot-format-buffer))
-                         ))
+                         (when (and
+                                (fboundp 'eglot-managed-p)
+                                (eglot-managed-p))
+                           (eglot-format-buffer))))
   :bind (:map eglot-mode-map
               ("M-F" . eglot-format))
   :config
