@@ -88,7 +88,7 @@
                    ;; s
                    ;; f
                    ;; shrink-path
-                   doom-modeline
+                   ;; doom-modeline
                    ;; cl-lib
                    ;; seq
                    ;; subr-x

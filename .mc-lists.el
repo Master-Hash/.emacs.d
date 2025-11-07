@@ -34,6 +34,7 @@
         magit-blame
         magit-blame-addition
         mc/mark-next-lines
+        mc/mark-previous-lines
         mouse-drag-mode-line
         mouse-select-window
         pixel-scroll-precision

@@ -485,6 +485,10 @@
   :ensure t
   :bind (("C-c u" . vundo)))
 
+(use-package terminal-here
+  :ensure t
+  :defer t)
+
 (use-package vc-git
   :defer 0.1 ;; the exact time is irrelevant, loading happens when open any file
   :config
@@ -660,7 +664,7 @@
                               "--all-scopes-completion"
                               "--background-index"
                               "--header-insertion=iwyu"
-                              "--function-arg-placeholders")))
+                              "--function-arg-placeholders=1")))
       (add-to-list 'eglot-server-programs
                '(c++-ts-mode . ("C:\\msys64\\clang64\\bin\\clangd.exe"
                                 "--compile-commands-dir=build"
@@ -669,7 +673,7 @@
                                 "--all-scopes-completion"
                                 "--background-index"
                                 "--header-insertion=iwyu"
-                                "--function-arg-placeholders")))
+                                "--function-arg-placeholders=1")))
       (add-to-list 'eglot-server-programs
                    '(rust-ts-mode . ("C:\\Users\\hash\\.rustup\\toolchains\\stable-x86_64-pc-windows-gnu\\bin\\rust-analyzer.exe" :initializationOptions
                                      (:cargo
@@ -715,7 +719,7 @@
                                 "--all-scopes-completion"
                                 "--background-index"
                                 "--header-insertion=iwyu"
-                                "--function-arg-placeholders")))
+                                "--function-arg-placeholders=1")))
     (add-to-list 'eglot-server-programs
                  '(c++-ts-mode . ("clangd"
                                   "--compile-commands-dir=build"
@@ -724,7 +728,7 @@
                                   "--all-scopes-completion"
                                   "--background-index"
                                   "--header-insertion=iwyu"
-                                  "--function-arg-placeholders")))
+                                  "--function-arg-placeholders=1")))
     (add-to-list 'eglot-server-programs
                  '(rust-ts-mode . ("rust-analyzer" :initializationOptions
                                    (:cargo
@@ -901,8 +905,8 @@ Version 2016-08-11"
  '(cursor-type 'bar)
  '(delete-selection-mode t)
  '(dictionary-server "dict.org")
- '(dired-auto-revert-buffer t)
- '(dired-dwim-target t)
+ '(dired-auto-revert-buffer t t)
+ '(dired-dwim-target t t)
  '(dired-movement-style 'bounded)
  '(display-line-numbers-width-start nil)
  '(duplicate-line-final-position 1)

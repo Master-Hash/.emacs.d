@@ -35,9 +35,9 @@
 (push '(left . 300) default-frame-alist)
 (push '(top . 100) default-frame-alist)
 
-(setopt package-archives '(("gnu"    . "https://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-                         ("nongnu" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
-                         ("melpa"  . "https://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+(setopt package-archives '(("gnu"    . "https://mirrors.lzu.edu.cn/elpa/gnu/")
+                         ("nongnu" . "https://mirrors.lzu.edu.cn/elpa/nongnu/")
+                         ("melpa"  . "https://mirrors.lzu.edu.cn/elpa/melpa/")))
 
 (setopt package-archive-priorities
         '(("gnu"    . 99)
