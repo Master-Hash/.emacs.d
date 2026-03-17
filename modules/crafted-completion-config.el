@@ -101,8 +101,8 @@
   (consult-customize
    consult-ripgrep consult-theme consult-ripgrep
    consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file
    :preview-key '(:debounce 0.2 any)
    consult-line
    ;; `https://www.reddit.com/r/emacs/comments/17t1yjx/consultline_with_cw/'
@@ -143,25 +143,25 @@
 ;;     (with-eval-after-load 'embark-consult
 ;;       (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))))
 
-(use-package embark
-  :ensure
-  :defer t
-  :bind (("C-h b" . embark-bindings)
-         ("C-h /" . embark-act))
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command)
-  :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
+;; (use-package embark
+;;   :ensure
+;;   :defer t
+;;   :bind (("C-h b" . embark-bindings)
+;;          ("C-h /" . embark-act))
+;;   :init
+;;   (setq prefix-help-command #'embark-prefix-help-command)
+;;   :config
+;;   ;; Hide the mode line of the Embark live/completions buffers
+;;   (add-to-list 'display-buffer-alist
+;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+;;                  nil
+;;                  (window-parameters (mode-line-format . none)))))
 
 ;; Consult users will also want the embark-consult package.
-(use-package embark-consult
-  :ensure
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+;; (use-package embark-consult
+;;   :ensure
+;;   :hook
+;;   (embark-collect-mode . consult-preview-at-point-mode))
 
 
 ;;; Corfu
