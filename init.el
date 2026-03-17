@@ -613,27 +613,10 @@
   (if (eq system-type 'windows-nt)
     (progn
       (add-to-list 'eglot-server-programs
-                   `(typescript-ts-mode
-                    .
-                    ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio"
-                                            :initializationOptions
-                                            (:preferences
-                                             (:quotePreference "double"
-                                              :importModuleSpecifier "relative"
-                                              :importModuleSpecifierEnding "js"
-                                              :preferTypeOnlyAutoImports t
-                                              :includeInlayParameterNameHints "all")
-                                             :locale "zh-CN")
-                                            )
-                                            ("vtsls.cmd" "--stdio")
-                                            ("deno" "lsp")))))
-      (add-to-list 'eglot-server-programs
-                   `(js-ts-mode
-                    .
-                    ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio")
-                                            ("vtsls.cmd" "--stdio")
-                                            ("deno" "lsp")))))
-
+                   '(((js-ts-mode :language-id "javascript")
+                      (tsx-ts-mode :language-id "typescriptreact")
+                      (typescript-ts-mode :language-id "typescript"))
+                     "C:\\Users\\hash\\.vscode\\extensions\\typescriptteam.native-preview-0.20251210.1-win32-arm64\\lib\\tsgo.exe" "--lsp" "--stdio"))
       (add-to-list 'eglot-server-programs
                    '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
                                          ;; "deno" "run" "-A" "npm:pyright/pyright-langserver" "--stdio"
@@ -649,15 +632,13 @@
                                            :ruff (:enabled t)))
 
                                      ))) ;; basedpyright or delance
-      (add-to-list 'eglot-server-programs
-                   '(markdown-ts-mode . ("marksman"))) ;; brilliant
       ;; (add-to-list 'eglot-server-programs
       ;;              '(powershell-ts-mode . ("pwsh" "-NoLogo"
       ;;                                   "-NoProfile"
       ;;                                   "-Command"
       ;;                                   "~/PowerShellEditorServices/PowerShellEditorServices/Start-EditorServices.ps1 -Stdio")))
       (add-to-list 'eglot-server-programs
-               '(c-ts-mode . ("C:\\msys64\\clang64\\bin\\clangd.exe"
+               '((c-ts-mode c++-ts-mode) . ("C:\\msys64\\clangarm64\\bin\\clangd.exe"
                               "--compile-commands-dir=build"
                               "--clang-tidy"
                               "--completion-style=detailed"
@@ -666,45 +647,19 @@
                               "--header-insertion=iwyu"
                               "--function-arg-placeholders=1")))
       (add-to-list 'eglot-server-programs
-               '(c++-ts-mode . ("C:\\msys64\\clang64\\bin\\clangd.exe"
-                                "--compile-commands-dir=build"
-                                "--clang-tidy"
-                                "--completion-style=detailed"
-                                "--all-scopes-completion"
-                                "--background-index"
-                                "--header-insertion=iwyu"
-                                "--function-arg-placeholders=1")))
-      (add-to-list 'eglot-server-programs
-                   '(rust-ts-mode . ("C:\\Users\\hash\\.rustup\\toolchains\\stable-x86_64-pc-windows-gnu\\bin\\rust-analyzer.exe" :initializationOptions
+                   '(rust-ts-mode . ("rust-analyzer.exe" :initializationOptions
                                      (:cargo
-                                      (:target "x86_64-pc-windows-gnullvm")
+                                      (:target "aarch64-pc-windows-gnullvm")
                                       ;; (:target "x86_64-pc-windows-gnu")
                                       :checkOnSave t
                                       :check (:command "clippy")
                                       :inlayHints (:typeHints (:enable t)))))))
     ;; nt ends
-    (add-to-list 'eglot-server-programs
-                 `(typescript-ts-mode
-                   .
-                   ,(eglot-alternatives '(("tsgo" "lsp" "-stdio") ;; preview
-                                          ("typescript-language-server.cmd" "--stdio"
-                                           :initializationOptions
-                                           (:preferences
-                                            (:quotePreference "double"
-                                                              :importModuleSpecifier "relative"
-                                                              :importModuleSpecifierEnding "js"
-                                                              :preferTypeOnlyAutoImports t
-                                                              :includeInlayParameterNameHints "all")
-                                            :locale "zh-CN")
-                                           )
-                                          ("vtsls.cmd" "--stdio")
-                                          ("deno" "lsp")))))
-    (add-to-list 'eglot-server-programs
-                 `(js-ts-mode
-                   .
-                   ,(eglot-alternatives '(("typescript-language-server.cmd" "--stdio")
-                                          ("vtsls.cmd" "--stdio")
-                                          ("deno" "lsp")))))
+      (add-to-list 'eglot-server-programs
+                   '(((js-ts-mode :language-id "javascript")
+                      (tsx-ts-mode :language-id "typescriptreact")
+                      (typescript-ts-mode :language-id "typescript"))
+                     "tsgo" "--lsp" "--stdio"))
     (add-to-list 'eglot-server-programs
                  '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
                                        "pyright-langserver" "--stdio"
@@ -712,7 +667,7 @@
                                        ;;  (:python (:analysis (:typeCheckingMode "strict")))
                                        ))) ;; basedpyright or delance
     (add-to-list 'eglot-server-programs
-                 '(c-ts-mode . ("clangd"
+                 '((c-ts-mode c++-ts-mode) . ("clangd"
                                 "--compile-commands-dir=build"
                                 "--clang-tidy"
                                 "--completion-style=detailed"
@@ -720,15 +675,6 @@
                                 "--background-index"
                                 "--header-insertion=iwyu"
                                 "--function-arg-placeholders=1")))
-    (add-to-list 'eglot-server-programs
-                 '(c++-ts-mode . ("clangd"
-                                  "--compile-commands-dir=build"
-                                  "--clang-tidy"
-                                  "--completion-style=detailed"
-                                  "--all-scopes-completion"
-                                  "--background-index"
-                                  "--header-insertion=iwyu"
-                                  "--function-arg-placeholders=1")))
     (add-to-list 'eglot-server-programs
                  '(rust-ts-mode . ("rust-analyzer" :initializationOptions
                                    (:cargo

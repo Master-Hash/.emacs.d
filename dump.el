@@ -27,6 +27,8 @@
                    display-line-numbers
                    easy-mmode
                    eldoc
+                   eieio
+                   eieio-core
                    elec-pair
                    electric
                    epa-hook
@@ -75,6 +77,8 @@
                    tree-widget
                    wakatime-mode
                    diff-hl
+                   magit-section
+                   llama
                    ;; dirvish
                    ;; dirvish-side
                    ;; dirvish-subtree
@@ -89,7 +93,7 @@
                    ;; f
                    ;; shrink-path
                    ;; doom-modeline
-                   ;; cl-lib
+                   cl-lib
                    ;; seq
                    ;; subr-x
                    ;; Not allowed built-ins:
