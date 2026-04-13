@@ -9,6 +9,7 @@ elpa/
 bookmarks
 network-security.data
 quelpa/
+modules/.dir-locals.el
 
 # Hash ignores files
 tree-sitter/
