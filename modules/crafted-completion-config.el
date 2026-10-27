@@ -198,10 +198,6 @@
   :init
   (global-corfu-mode 1)
   :config
-  ;; delete when Emacs 31
-  (unless (display-graphic-p)
-    (when (require 'corfu-terminal nil :noerror)
-      (corfu-terminal-mode +1)))
   (when (require 'corfu-popupinfo nil :noerror)
     (corfu-popupinfo-mode +1)
     (eldoc-add-command #'corfu-insert)

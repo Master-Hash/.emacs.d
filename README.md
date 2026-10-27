@@ -79,7 +79,7 @@ C:\Windows\System32\cmd.exe /c "SET LANG=zh_CN.UTF-8&& SET Path=%path%;C:\msys64
 
 ## 同步上游
 
-本仓库严格基于 Crafted Emacs 的最新分支。顺便一提，它的默认设置延迟加载做得很差，官方认为这是教学项目不应该用太多宏所以[拒绝使用](https://github.com/SystemCrafters/crafted-emacs/issues/260) `use-package`——那是我设置延迟启动最有效的办法。于是乎我用 `use-package` 把许多包的加载重写了一遍。
+本仓库不定期从 Crafted Emacs 合并（不保证线性提交）。顺便一提，它的默认设置延迟加载做得很差，官方认为这是教学项目不应该用太多宏所以[拒绝使用 `use-package`](https://github.com/SystemCrafters/crafted-emacs/issues/260)——那是我设置延迟启动最有效的办法。于是乎我用 `use-package` 把许多包的加载重写了一遍。
 
 未来我自己添加的所有包都会迁移至用 `use-package` 加载。
 

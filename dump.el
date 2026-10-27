@@ -42,7 +42,7 @@
                    package-vc
                    paren
                    pixel-scroll
-                   project
+                   ; project
                    repeat
                    rfn-eshadow
                    savehist

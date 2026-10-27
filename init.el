@@ -5,7 +5,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Cascadia Code" :foundry "outline" :slant normal :weight normal :height 110 :width normal)))))
+ '(default ((t (:family "Cascadia Code" :foundry "outline" :slant normal :weight normal :height 110 :width normal))))
+ '(delete-selection-replacement ((t nil))))
+
+
 
 (if window-system
   (progn
@@ -83,13 +86,11 @@
   )
 
 (luna-if-dump
-    (when window-system
-      (enable-theme 'doom-one))
+    (enable-theme 'doom-one)
   (use-package doom-themes
     :ensure t
     :config
-    (load-theme 'doom-one t)
-    :if (window-system)))
+    (load-theme 'doom-one t)))
 
 ;; (package-initialize) ;; You might already have this line
 
@@ -124,7 +125,7 @@
 (if (eq system-type 'windows-nt)
     (progn
       (when window-system (set-frame-parameter nil 'alpha 0.96))
-      (setq default-directory (concat (getenv "APPDATA") "\\..\\..\\"))
+      (setq default-directory (concat (getenv "USERPROFILE") "\\"))
       (setopt wakatime-cli-path
               (concat "C:\\msys64\\"
                       (pcase system-configuration
@@ -133,8 +134,9 @@
                         (_ (error)))
                       "\\bin\\wakatime.exe"))
       ;; (setq ispell-alternate-dictionary "~/../../Documents/The_Chambers_Thesaurus.txt")
-      (set-clipboard-coding-system 'utf-16-le)
-      (set-selection-coding-system 'utf-16-le))
+      ;; (set-clipboard-coding-system 'utf-16-le)
+      ;; (set-selection-coding-system 'utf-16-le)
+      )
   (set-selection-coding-system 'utf-8))
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -516,18 +518,25 @@
   :vc (:url "git@github.com:roife/emt.git"
             :branch "master"
             :rev :newest)
-  :defer t
   :config
-  (emt-ensure)
-  :bind (([remap forward-word] . emt-forward-word)
-         ([remap backward-word] . emt-backward-word)
-         ([remap kill-word] . emt-kill-word)
-         ([remap backward-kill-word] . emt-backward-kill-word)
-         ([remap word-at-point] . emt-word-at-point-or-forward)
-         ("C-<left>" . emt-backward-word)
-         ("M-<left>" . emt-backward-word)
-         ("C-<right>" . emt-forward-word)
-         ("M-<right>" . emt-forward-word)))
+  (emt-mode +1)
+  ;; :bind (([remap forward-word] . emt-forward-word)
+  ;;        ([remap backward-word] . emt-backward-word)
+  ;;        ([remap kill-word] . emt-kill-word)
+  ;;        ([remap backward-kill-word] . emt-backward-kill-word)
+  ;;        ([remap word-at-point] . emt-word-at-point-or-forward)
+  ;;        ("C-<left>" . emt-backward-word)
+  ;;        ("M-<left>" . emt-backward-word)
+  ;;        ("C-<right>" . emt-forward-word)
+  ;;        ("M-<right>" . emt-forward-word))
+  )
+
+;; (use-package lolipop-mode
+;;   :vc (:url "git@github.com:RadioNoiseE/lolipop.git"
+;;             :branch "master"
+;;             :rev :newest)
+;;   :ensure nil
+;;   :hook (after-init . lolipop-mode))
 
 ;; (use-package catppuccin-theme
 ;;   :ensure t
@@ -563,6 +572,44 @@
 ;; (use-package elm-mode
 ;;   :ensure
 ;;   :mode "\\.lalrpop\\'")
+
+;; (use-package vterm
+;;   :ensure t
+;;   :defer t
+;;   :custom
+;;   ((vterm-shell "C:/Users/hash/AppData/Local/Microsoft/WindowsApps/pwsh.exe")))
+
+(use-package ghostel
+  :ensure t
+  :defer t
+  :bind (("C-x m" . ghostel)
+         :map ghostel-semi-char-mode-map
+         ("C-s"  . consult-line)
+         ("C-k"  . my/ghostel-send-C-k-and-kill)
+         ;; ;; I'm used to go up/down the shell history with M-n/p from eshell
+         ;; ;; Simulate this behavior in ghostel by sending C-p and C-n
+         ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+         ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+         :map project-prefix-map
+         ("m" . ghostel-project)
+         ("M" . ghostel-project-list-buffers))
+  :custom
+  (ghostel-shell "pwsh")
+  :config
+  (defun my/ghostel-send-C-k-and-kill ()
+    "Send `C-k' to ghostel.
+Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+    (interactive)
+    (kill-ring-save (point) (line-end-position))
+    (ghostel-send-key "k" "ctrl"))
+
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+
+(use-package ghostel-comint
+  :ensure nil
+  :hook (after-init . ghostel-comint-global-mode))
 
 (use-package magit
   :ensure t
@@ -616,7 +663,7 @@
                    '(((js-ts-mode :language-id "javascript")
                       (tsx-ts-mode :language-id "typescriptreact")
                       (typescript-ts-mode :language-id "typescript"))
-                     "C:\\Users\\hash\\.vscode\\extensions\\typescriptteam.native-preview-0.20251210.1-win32-arm64\\lib\\tsgo.exe" "--lsp" "--stdio"))
+                     "C:\\Users\\hash\\.vscode\\extensions\\typescriptteam.native-preview-0.20260706.1-win32-arm64\\lib\\tsgo.exe" "--lsp" "--stdio"))
       (add-to-list 'eglot-server-programs
                    '((python-ts-mode) . (;; "delance-langserver.cmd" "--stdio"
                                          ;; "deno" "run" "-A" "npm:pyright/pyright-langserver" "--stdio"
@@ -828,7 +875,23 @@ Version 2016-08-11"
         (goto-char (car bounds)))
       )))
 
-(setopt adaptive-fill-regexp "[ 	]*\\([!|•‣⁃◦]+[ 	]*\\)*\\([*-][ 	]\\[[x ]\\)*")
+(defun my-visual-wrap--apply-to-line (orig)
+  (if-let* ((prefix (fill-match-adaptive-prefix)))
+      (if (string-empty-p prefix)
+          (put-text-property
+           (point) (pos-eol)
+           'wrap-prefix
+           (make-string visual-wrap-extra-indent ?\s))
+        (funcall orig))
+    (funcall orig)))
+
+(advice-add 'visual-wrap--apply-to-line
+            :around
+            #'my-visual-wrap--apply-to-line)
+
+;; (setopt adaptive-fill-regexp "[ 	]*\\([!|•‣⁃◦]+[ 	]*\\)*\\([*-][ 	]\\[[x ]\\)*")
+(setopt adaptive-fill-regexp "[-–!|*#%;·•‣⁃◦ 	]*")
+;; (setopt adaptive-fill-first-line-regexp "\\`[ 	]*\\'")
 (global-wakatime-mode)
 
 (custom-set-variables
@@ -877,7 +940,13 @@ Version 2016-08-11"
  '(org-hide-emphasis-markers nil)
  '(package-archive-priorities '(("gnu" . 99) ("nongnu" . 80) ("melpa" . 70)))
  '(package-quickstart t)
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(avy breadcrumb cape corfu diff-hl doom-modeline doom-themes eglot
+         embark-consult emt expreg ghostel imenu-list ligature
+         lolipop-mode magit marginalia move-text multiple-cursors
+         nerd-icons-completion nerd-icons-corfu nerd-icons-dired
+         nerd-icons-ibuffer orderless rainbow-delimiters
+         symbol-overlay terminal-here vertico vundo wakatime-mode))
  '(package-vc-selected-packages
    '((dirvish :url "git@github.com:alexluigit/dirvish.git" :branch "main")))
  '(pixel-scroll-precision-interpolate-page t)
@@ -925,4 +994,3 @@ Version 2016-08-11"
  '(xref-show-definitions-function 'xref-show-definitions-completing-read t))
 
 (put 'scroll-left 'disabled nil)
-

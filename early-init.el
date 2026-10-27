@@ -35,9 +35,9 @@
 (push '(left . 300) default-frame-alist)
 (push '(top . 100) default-frame-alist)
 
-(setopt package-archives '(("gnu"    . "https://202.201.2.130/elpa/gnu/")
-                         ("nongnu" . "https://202.201.2.130/elpa/nongnu/")
-                         ("melpa"  . "https://202.201.2.130/elpa/melpa/")))
+(setopt package-archives '(("gnu"    . "https://mirrors4.tuna.tsinghua.edu.cn/elpa/gnu/")
+                         ("nongnu" . "https://mirrors4.tuna.tsinghua.edu.cn/elpa/nongnu/")
+                         ("melpa"  . "https://mirrors4.tuna.tsinghua.edu.cn/elpa/melpa/")))
 
 (setopt package-archive-priorities
         '(("gnu"    . 99)
@@ -47,3 +47,5 @@
 
 (setq load-suffixes '(".elc" ".el"))
 (setq load-file-rep-suffixes '(""))
+
+(setopt w32-ime-preedit t)
