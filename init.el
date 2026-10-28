@@ -35,7 +35,7 @@
     ;; (setq-default whitespace-style '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab tab-mark newline-mark missing-newline-at-eof))
     )
   (xterm-mouse-mode)
-  (global-window-tool-bar-mode)
+  ; (global-window-tool-bar-mode)
   (tool-bar-mode))
 
 ;; (setopt vc-handled-backends nil)
@@ -946,7 +946,7 @@ Version 2016-08-11"
          lolipop-mode magit marginalia move-text multiple-cursors
          nerd-icons-completion nerd-icons-corfu nerd-icons-dired
          nerd-icons-ibuffer orderless rainbow-delimiters
-         symbol-overlay terminal-here vertico vundo wakatime-mode))
+         symbol-overlay terminal-here vertico vundo wakatime-mode xref))
  '(package-vc-selected-packages
    '((dirvish :url "git@github.com:alexluigit/dirvish.git" :branch "main")))
  '(pixel-scroll-precision-interpolate-page t)

@@ -3,7 +3,7 @@
 
 ;; `https://archive.casouri.cc/note/2020/painless-transition-to-portable-dumper/'
 
-(load "c:/Users/hash/AppData/Roaming/.emacs.d/modules/crafted-init-config")
+(load (expand-file-name "modules/crafted-init-config" user-emacs-directory))
 ;; (require 'crafted-defaults-config)
 ;; (require 'crafted-completion-config)
 (setq native-comp-enable-subr-trampolines nil)
@@ -14,9 +14,10 @@
       luna-dumped t)
 ;; (package-initialize) ;; doens’t require each package, we need to load
 ;; those we want manually
-(push "c:/Users/hash/AppData/Roaming/.emacs.d/elpa/dirvish/extensions" load-path)
+;; (push (expand-file-name "elpa/dirvish/extensions" user-emacs-directory) load-path)
 (dolist (package '(
                    ;; Built-ins
+                   xref
                    autoinsert
                    autorevert
                    china-util
@@ -115,5 +116,5 @@
 (load-theme 'doom-one t t)
 
 ;; dump image
-(dump-emacs-portable "c:/Users/hash/AppData/Roaming/.emacs.d/emacs.pdmp")
+(dump-emacs-portable (expand-file-name "emacs.pdmp" user-emacs-directory))
 
